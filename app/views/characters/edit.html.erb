@@ -1,6 +1,8 @@
-<h1>New Character</h1>
+<h1>Edit Character</h1>
 <%= form_for :character, url: character_path(@character), method: :patch do |f| %>
-  <%= f.text_field :name %>
-  <%= f.text_field :description %>
-  <%= f.submit %>
+  <div class="input-group">
+    <%= f.text_field :name, class: "form-control", placeholder: "Name..." %>
+    <%= f.text_field :description, class: "form-control", placeholder: "Description..."  %>
+    <%= f.submit "Save" , class: "form-control"  %>
+  </div>
 <% end %>

@@ -1,0 +1,8 @@
+<h1><%= @room.name %></h1>
+<p><%= @room.description %></p>
+<ul class="list-inline">
+  <% @room.characters.each do |c| %>
+    <li><%= link_to c.name, character_path(c) %> is here.</li>
+  <% end %>
+</ul>
+<%= link_to "Edit", edit_room_path(@room), class: 'btn btn-success' %>

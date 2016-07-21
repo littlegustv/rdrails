@@ -1,2 +1,9 @@
 <h1><%= @character.name %></h1>
 <p><%= @character.description %></p>
+<ul class="list-inline">
+  <li class="h4">This character appears in the following rooms:</li>
+  <% @character.rooms.each do |room| %>
+    <li><%= link_to room.name, room_path(room) %></li>
+  <% end %>
+</ul>
+<%= link_to "Edit", edit_character_path(@character), class: 'btn btn-success' %>

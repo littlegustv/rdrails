@@ -4,8 +4,11 @@ class CharactersController < ApplicationController
 
   def create
     @character = Character.new(character_params)
-    @character.save
-    redirect_to @character
+    if @character.save
+      redirect_to @character
+    else
+      redirect_to new_character_path
+    end
   end
 
   def update

@@ -1,0 +1,13 @@
+<h1>Edit Room</h1>
+<%= form_for @room, url: room_path(@room), method: :patch do |f| %>
+  <div class="input-group">
+    <%= f.text_field :name, class: "form-control", placeholder: "Name..." %>
+    <%= f.text_field :description, class: "form-control", placeholder: "Description..."  %>
+
+    <%= f.fields_for :mobiles do |mobile_form| %>
+      <%= mobile_form.select(:character_id, Character.all.collect {|a| [a.name, a.id]}, {}, { class: 'form-control'}) %>
+    <% end %>
+
+    <%= f.submit "Save" , class: "form-control"  %>
+  </div>
+<% end %>
