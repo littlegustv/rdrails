@@ -1,0 +1,22 @@
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="list-group">
+      <li class="list-group-item text-right">
+        <a href="/characters/new" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Add New</a>
+      </li>
+      <% Character.all.each do |character| %>
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-sm-6"><span class='h3'><%= character.name %></span></div>
+            <div class="col-sm-6 text-right">
+              <a href="<%= character_path(character) %>" class="btn btn-info">See more</a>
+              <a href="<%= edit_character_path(character) %>" class="btn btn-success">Edit</a>
+              <%= link_to 'Delete', character_path(character), method: :delete, class: 'btn btn-danger' %>
+              <!--<a href="<%= character_path(character) %>/destroy" class="btn btn-danger">Delete</a>-->
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>
