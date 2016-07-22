@@ -1,13 +1,14 @@
-<h1>Edit Room</h1>
-<%= form_for @room, url: room_path(@room), method: :patch do |f| %>
-  <div class="input-group">
-    <%= f.text_field :name, class: "form-control", placeholder: "Name..." %>
-    <%= f.text_field :description, class: "form-control", placeholder: "Description..."  %>
-
-    <%= f.fields_for :mobiles do |mobile_form| %>
-      <%= mobile_form.select(:character_id, Character.all.collect {|a| [a.name, a.id]}, {}, { class: 'form-control'}) %>
-    <% end %>
-
-    <%= f.submit "Save" , class: "form-control"  %>
+<div class="row" ng-controller='editRoom'>
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">{{ room.name }}</div>
+      <div class="panel-body">
+        <p>{{ room.description }}</p>
+        <p>
+          <span class="text-primary" ng-repeat="mobile in room.mobiles">{{ mobile.name }} </span>
+        </p>
+      </div>
+    </div>
   </div>
-<% end %>
+  <input type="hidden" value="<%= @room.id %>" id="roomId">
+</div>

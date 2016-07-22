@@ -25,17 +25,29 @@ class RoomsController < ApplicationController
 
   def show
     @room = Room.find(params[:id])
+    respond_to do |format|
+      format.json { render :show }
+      format.html
+    end
   end
 
   def edit
     @room = Room.find(params[:id])
   end
-
+  
   def destroy
     @room = Room.find(params[:id])
     @room.destroy
 
     redirect_to rooms_path
+  end
+
+  def index
+    @rooms = Room.all
+    respond_to do |format|
+      format.json { render json: @rooms }
+      format.html
+    end
   end
 
   private

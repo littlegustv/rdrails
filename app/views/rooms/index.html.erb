@@ -1,22 +1,18 @@
-<div class="row">
+<div class="row" ng-controller="roomsCtrl">
   <div class="col-sm-12">
     <ul class="list-group">
       <li class="list-group-item text-right">
         <a href="/rooms/new" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Add New</a>
       </li>
-      <% Room.all.each do |room| %>
-        <li class="list-group-item">
-          <div class="row">
-            <div class="col-sm-6"><span class='h3'><%= room.name %></span></div>
-            <div class="col-sm-6 text-right">
-              <a href="<%= room_path(room) %>" class="btn btn-info">See more</a>
-              <a href="<%= edit_room_path(room) %>" class="btn btn-success">Edit</a>
-              <%= link_to 'Delete', room_path(room), method: :delete, class: 'btn btn-danger' %>
-              <!--<a href="<%= room_path(room) %>/destroy" class="btn btn-danger">Delete</a>-->
-            </div>
+      <li class="list-group-item" ng-repeat="room in rooms">
+        <div class="row">
+          <div class="col-sm-6"><span class='h3'>{{ room.name }}</span></div>
+          <div class="col-sm-6 text-right">
+            <a href="/rooms/{{ room.id }}" class="btn btn-info">See more</a>
+            <a href="/rooms/{{ room.id }}/edit" class="btn btn-success">Edit</a>
           </div>
-        </li>
-      <% end %>
+        </div>
+      </li>
     </ul>
   </div>
 </div>
