@@ -1,12 +1,22 @@
-Requires Rails 4.2.5.1, 2.2.3
+### Welcome To Redemption on Rails
 
-Clone repository into folder.
+To work on the project (roughly speaking)
 
-Run the following:
+1. Install Ruby version 2.2.3 (you can use rbenv or rvm to manage ruby version if you like!)
 
-    bundle install
-    bundle exec rake db:migrate
+2. Install nodejs, sqlite3 (for now!) and the rails gem (rails version 4.2.5.1 or later)
 
-Then you are good to go!  Start it up with:
+    sudo apt-get install nodejs
+    sudo apt-get install sqlite3
+    gem install rails
+
+3. Clone this repository
+4. Run "bundle install" to install the required gems
+
+	bundle install
+
+NOTE: this might fail because of a missing sqlite dependency.  If it does, follow the suggested instructions!
+
+5. Launch the app!
 
     bundle exec rails s
