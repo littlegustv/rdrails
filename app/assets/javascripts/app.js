@@ -1,5 +1,4 @@
 var debugScope;
-console.log('here');
 
 var rdApp = angular.module('rdApp', ['ngResource']);
 
@@ -26,17 +25,42 @@ rdApp.controller('roomsCtrl', function ($scope, Room) {
   $scope.rooms = Room.query();
 });
 
-rdApp.controller('editRoom', function ($scope, Room, Character) {
+rdApp.controller('editRoom', function ($scope, $location, Room, Character) {
   var roomId = $("#roomId").val();
-  Room.get({id: roomId}, function (room) {
-	$scope.room = room;
-  	if ($scope.room.mobiles.length <= 0) $scope.room.mobiles = [{}];
-  	
-  });
+	if (roomId) {
+	  Room.get({id: roomId}, function (room) {
+			$scope.room = room;
+	  	$scope.initRoom();
+	  });
+	} else {
+		$scope.room = {mobiles: [{}], exits: [{}]};
+	}
 
-  $scope.addMobile = function () {
-  	if ($scope.room) $scope.room.mobiles.push({});
+	$scope.initRoom = function () {
+		if ($scope.room.mobiles.length <= 0) $scope.room.mobiles = [{}];
+  	if ($scope.room.exits.length <= 0) $scope.room.exits = [{}];
+	}
+
+  $scope.save = function () {
+  	$scope.room.mobiles_attributes = $scope.room.mobiles.filter( function (m) { return m.character_id });
+  	$scope.room.exits_attributes = $scope.room.exits.filter( function (m) { return m.destination_id });
+  	delete $scope.room['mobiles'];
+  	delete $scope.room['exits'];
+  	var redirect = $scope.room.id === undefined;
+  	$scope.room = Room.save($scope.room, function (room) {
+  		$scope.initRoom();
+  		if (redirect) window.location = '/rooms/' + $scope.room.id + '/edit';
+  	});
+  }
+
+  $scope.destroy = function (mobile) {
+  	mobile._destroy = true;
+  }
+
+  $scope.add = function (array) {
+  	if ($scope.room) array.push({});
   }
   $scope.characters = Character.query();
+  $scope.rooms = Room.query();
   debugScope = $scope;
 });

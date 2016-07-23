@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  direction: MyString
+  destination: 
+  room: 
+
+two:
+  direction: MyString
+  destination: 
+  room: 

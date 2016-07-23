@@ -2,14 +2,38 @@
   <div class="col-sm-6">
     <div class="panel panel-default">
       <div class="panel-heading">{{ room.name }}</div>
-      <div class="panel-body">
-        <label for="" class="control-label">Name</label><input type="text" ng-model="room.name" class="form-control">
-        <label for="" class="control-label">Description</label><input type="text" class="form-control" ng-model="room.description">
-        <select name="" id="" ng-repeat="mobile in room.mobiles" ng-model="mobile.character_id" class="form-control" ng-options="character.id as character.name for character in characters"></select>
-        <span class="btn btn-primary" ng-click="addMobile();">Add new</span>
+      <div class="panel-body form-group">
+        <div class="input-group">
+          <label for="" class="control-label">Name</label><input type="text" ng-model="room.name" class="form-control">
+        </div>
+        <div class="input-group">
+          <label for="" class="control-label">Description</label><input type="text" class="form-control" ng-model="room.description">
+        </div>
+        <label for="" class="control-label">Mobiles</label>
+        <div ng-repeat="mobile in room.mobiles" class="input-group">
+          <select name="" id="" ng-model="mobile.character_id" class="form-control" ng-options="character.id as character.name for character in characters"></select>
+          <span class="input-group-btn" ng-click="destroy(mobile);">
+            <span class="btn btn-default" ng-class="{'btn-danger' : mobile._destroy}">
+              <span class="glyphicon glyphicon-remove"></span>
+            </span>
+          </span>
+        </div>
+        <span class="btn btn-primary" ng-click="add(room.mobiles);">Add Mobile</span><br>
+        <label for="" class="control-label">Exits</label>
+        <div ng-repeat="exit in room.exits" class="input-group">
+          <input type="text" ng-model="exit.direction" class="form-control">
+          <select name="" id="" ng-model="exit.destination_id" class="form-control" ng-options="room.id as room.name for room in rooms"></select>
+          <span class="input-group-btn" ng-click="destroy(exit);">
+            <span class="btn btn-default" ng-class="{'btn-danger' : exit._destroy}">
+              <span class="glyphicon glyphicon-remove"></span>
+            </span>
+          </span>
+        </div>
+        <span class="btn btn-primary" ng-click="add(room.exits);">Add Exit</span>
       </div>
-      <div class="panel-footer"><span class="btn btn-default" ng-click="room.$save();">Save</span></div>
+      <div class="panel-footer"><span class="btn btn-default" ng-click="save();">Save</span></div>
     </div>
+    {{ room.mobiles }}
   </div>
   <input type="hidden" value="<%= @room.id %>" id="roomId">
 </div>

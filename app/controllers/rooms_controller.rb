@@ -1,7 +1,8 @@
 class RoomsController < ApplicationController
   def new
     @room = Room.new
-    @room.mobiles.build
+    render :edit
+    #redirect_to edit_room_path
   end
 
   def create
@@ -12,7 +13,10 @@ class RoomsController < ApplicationController
       @room = Room.new(room_params)
     end
     if @room.save
-      redirect_to @room
+      respond_to do |format|
+        format.json { render :show }
+        format.html
+      end
     else
       redirect_to new_room_path
     end
@@ -59,6 +63,6 @@ class RoomsController < ApplicationController
   private
 
   def room_params
-    params.require(:room).permit(:name, :description, mobiles_attributes: [:character_id, :room_id] )
+    params.permit(:name, :description, mobiles_attributes: [:id, :character_id, :room_id, :_destroy], exits_attributes: [:id, :room_id, :destination_id, :direction, :_destroy] )
   end
 end

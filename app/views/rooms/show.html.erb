@@ -5,4 +5,9 @@
     <li><%= link_to c.name, character_path(c) %> is here.</li>
   <% end %>
 </ul>
-<%= link_to "Edit", edit_room_path(@room), class: 'btn btn-success' %>
+<ul class="list-inline">
+	<li class="h4">Exits</li>
+	<% @room.exits.each do |exit| %>
+		<li><%= link_to "[#{exit.direction}]", room_path(exit.destination) %></li>
+	<% end %>
+</ul>
