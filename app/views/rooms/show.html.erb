@@ -11,3 +11,4 @@
 		<li><%= link_to "[#{exit.direction}]", room_path(exit.destination) %></li>
 	<% end %>
 </ul>
+<%= link_to "Edit", edit_room_path(@room), class: 'btn btn-success' %>

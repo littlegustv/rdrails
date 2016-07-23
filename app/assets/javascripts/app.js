@@ -26,6 +26,8 @@ rdApp.controller('roomsCtrl', function ($scope, Room) {
 });
 
 rdApp.controller('editRoom', function ($scope, $location, Room, Character) {
+	$scope.directions = ["North", "South", "East", "West", "Up", "Down"];
+
   var roomId = $("#roomId").val();
 	if (roomId) {
 	  Room.get({id: roomId}, function (room) {

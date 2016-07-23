@@ -1,0 +1,9 @@
+redemption on rails:
+  ☐ add stat, item, area and affect models
+  ☐ character editor (dynamic)
+  ☐ improve layout and display of editors (inline, drag & drop, etc.);
+  ☐ figure out composite aggregation of stats (i.e. character + equipment_items + affects + room_affects)
+  ☐ user accounts
+    ☐ has_many characters through player_characters
+    ☐ role
+    ☐ cancan

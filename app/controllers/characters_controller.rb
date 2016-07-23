@@ -1,9 +1,12 @@
 class CharactersController < ApplicationController
+  before_filter :authenticate_user!
+
   def new
   end
 
   def create
     @character = Character.new(character_params)
+    @character.created_by = current_user
     if @character.save
       redirect_to @character
     else
@@ -30,8 +33,14 @@ class CharactersController < ApplicationController
   end
 
   def index
+    if current_user.role == 'immortal'
+      @characters = Character.all
+    else
+      @characters = current_user.characters
+    end
+
     respond_to do |format|
-      format.json { render json: Character.all }
+      format.json { render json: @characters }
       format.html
     end
   end
