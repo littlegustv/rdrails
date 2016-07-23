@@ -3,11 +3,12 @@
     <div class="panel panel-default">
       <div class="panel-heading">{{ room.name }}</div>
       <div class="panel-body">
-        <p>{{ room.description }}</p>
-        <p>
-          <span class="text-primary" ng-repeat="mobile in room.mobiles">{{ mobile.name }} </span>
-        </p>
+        <label for="" class="control-label">Name</label><input type="text" ng-model="room.name" class="form-control">
+        <label for="" class="control-label">Description</label><input type="text" class="form-control" ng-model="room.description">
+        <select name="" id="" ng-repeat="mobile in room.mobiles" ng-model="mobile.character_id" class="form-control" ng-options="character.id as character.name for character in characters"></select>
+        <span class="btn btn-primary" ng-click="addMobile();">Add new</span>
       </div>
+      <div class="panel-footer"><span class="btn btn-default" ng-click="room.$save();">Save</span></div>
     </div>
   </div>
   <input type="hidden" value="<%= @room.id %>" id="roomId">

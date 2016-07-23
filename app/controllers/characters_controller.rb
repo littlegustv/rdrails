@@ -29,6 +29,13 @@ class CharactersController < ApplicationController
     @character = Character.find(params[:id])
   end
 
+  def index
+    respond_to do |format|
+      format.json { render json: Character.all }
+      format.html
+    end
+  end
+
   def destroy
     @character = Character.find(params[:id])
     @character.destroy

@@ -5,7 +5,12 @@ class RoomsController < ApplicationController
   end
 
   def create
-    @room = Room.new(room_params)
+    if params[:id] && Room.exists?(params[:id].to_i)
+      @room = Room.find(params[:id])
+      @room.update(room_params)
+    else
+      @room = Room.new(room_params)
+    end
     if @room.save
       redirect_to @room
     else
@@ -25,6 +30,7 @@ class RoomsController < ApplicationController
 
   def show
     @room = Room.find(params[:id])
+    @mobiles = @room.mobiles
     respond_to do |format|
       format.json { render :show }
       format.html
