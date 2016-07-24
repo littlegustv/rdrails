@@ -6,4 +6,5 @@
     <li><%= link_to room.name, room_path(room) %></li>
   <% end %>
 </ul>
+<%= render partial: "shared/show_stats", locals: {stats: @character.stat} %> 
 <%= link_to "Edit", edit_character_path(@character), class: 'btn btn-success' %>

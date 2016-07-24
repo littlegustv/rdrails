@@ -1,0 +1,6 @@
+<h1>Edit Item</h1>
+<%= form_for @item, url: item_path(@item), method: :patch do |f| %>
+  <div class="input-group">
+		<%= render partial: "shared/form", locals: {f: f} %>
+  </div>
+<% end %>

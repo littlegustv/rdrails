@@ -2,6 +2,8 @@ class CharactersController < ApplicationController
   before_filter :authenticate_user!
 
   def new
+    @character = Character.new
+    @character.stat = Stat.new
   end
 
   def create
@@ -55,6 +57,6 @@ class CharactersController < ApplicationController
   private
 
   def character_params
-    params.require(:character).permit(:name, :description)
+    params.require(:character).permit(:name, :description, :stat_attributes => [:hitpoints, :manapoints, :attackspeed, :damagereduction])
   end
 end

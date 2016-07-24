@@ -1,0 +1,22 @@
+<div class="row">
+  <div class="col-sm-12">
+    <ul class="list-group">
+      <li class="list-group-item text-right">
+        <a href="/items/new" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Add New</a>
+      </li>
+      <% @items.each do |item| %>
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-sm-6"><span class='h3'><%= item.name %></span></div>
+            <div class="col-sm-6 text-right">
+              <a href="<%= item_path(item) %>" class="btn btn-info">See more</a>
+              <a href="<%= edit_item_path(item) %>" class="btn btn-success">Edit</a>
+              <%= link_to 'Delete', item_path(item), method: :delete, class: 'btn btn-danger' %>
+              <!--<a href="<%= item_path(item) %>/destroy" class="btn btn-danger">Delete</a>-->
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>

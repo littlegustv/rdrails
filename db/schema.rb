@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160723225030) do
+ActiveRecord::Schema.define(version: 20160724155933) do
 
 # Could not dump table "characters" because of following NoMethodError
 #   undefined method `[]' for nil:NilClass
@@ -24,6 +24,14 @@ ActiveRecord::Schema.define(version: 20160723225030) do
     t.datetime "updated_at",     null: false
   end
 
+  create_table "items", force: :cascade do |t|
+    t.string   "name"
+    t.string   "description"
+    t.integer  "stat_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
   create_table "mobiles", force: :cascade do |t|
     t.integer "room_id",      null: false
     t.integer "character_id", null: false
@@ -32,11 +40,25 @@ ActiveRecord::Schema.define(version: 20160723225030) do
 # Could not dump table "old_characters" because of following NoMethodError
 #   undefined method `[]' for nil:NilClass
 
+  create_table "room_items", force: :cascade do |t|
+    t.integer "room_id"
+    t.integer "item_id"
+  end
+
   create_table "rooms", force: :cascade do |t|
     t.string   "name"
     t.text     "description"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+  end
+
+  create_table "stats", force: :cascade do |t|
+    t.integer  "hitpoints"
+    t.integer  "manapoints"
+    t.integer  "attackspeed"
+    t.integer  "damagereduction"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
   create_table "users", force: :cascade do |t|

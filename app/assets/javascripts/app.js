@@ -21,11 +21,15 @@ rdApp.factory('Character', function ($resource) {
   return $resource('/characters/:id.json');
 });
 
+rdApp.factory('Item', function ($resource) {
+	return $resource('/items/:id.json');
+});
+
 rdApp.controller('roomsCtrl', function ($scope, Room) {
   $scope.rooms = Room.query();
 });
 
-rdApp.controller('editRoom', function ($scope, $location, Room, Character) {
+rdApp.controller('editRoom', function ($scope, $location, Room, Character, Item) {
 	$scope.directions = ["North", "South", "East", "West", "Up", "Down"];
 
   var roomId = $("#roomId").val();
@@ -35,19 +39,22 @@ rdApp.controller('editRoom', function ($scope, $location, Room, Character) {
 	  	$scope.initRoom();
 	  });
 	} else {
-		$scope.room = {mobiles: [{}], exits: [{}]};
+		$scope.room = {mobiles: [{}], exits: [{}], room_items: [{}]};
 	}
 
 	$scope.initRoom = function () {
 		if ($scope.room.mobiles.length <= 0) $scope.room.mobiles = [{}];
   	if ($scope.room.exits.length <= 0) $scope.room.exits = [{}];
+	 	if ($scope.room.room_items.length <= 0) $scope.room.room_items = [{}];
 	}
 
   $scope.save = function () {
   	$scope.room.mobiles_attributes = $scope.room.mobiles.filter( function (m) { return m.character_id });
   	$scope.room.exits_attributes = $scope.room.exits.filter( function (m) { return m.destination_id });
+  	$scope.room.room_items_attributes = $scope.room.room_items.filter( function (m) { return m.item_id });
   	delete $scope.room['mobiles'];
   	delete $scope.room['exits'];
+  	delete $scope.room['room_items'];
   	var redirect = $scope.room.id === undefined;
   	$scope.room = Room.save($scope.room, function (room) {
   		$scope.initRoom();
@@ -63,6 +70,7 @@ rdApp.controller('editRoom', function ($scope, $location, Room, Character) {
   	if ($scope.room) array.push({});
   }
   $scope.characters = Character.query();
+  $scope.items = Item.query();
   $scope.rooms = Room.query();
   debugScope = $scope;
 });

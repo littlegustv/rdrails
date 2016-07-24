@@ -1,0 +1,13 @@
+  <div class="input-group">
+    <%= f.text_field :name, class: "form-control", placeholder: "Name..." %>
+    <%= f.text_field :description, class: "form-control", placeholder: "Description..."  %>
+
+		<%= f.fields_for :stat do |sf| %>
+			<%= sf.number_field :hitpoints, class: "form-control", placeholder: "Hitpoints..." %>
+			<%= sf.number_field :manapoints, class: "form-control", placeholder: "Manapoints..." %>
+			<%= sf.number_field :attackspeed, class: "form-control", placeholder: "Attackspeed..." %>
+			<%= sf.number_field :damagereduction, class: "form-control", placeholder: "Damagereduction..." %>
+		<% end %>
+
+    <%= f.submit "Save" , class: "form-control"  %>
+  </div>

@@ -1,0 +1,10 @@
+<h1><%= @item.name %></h1>
+<p><%= @item.description %></p>
+<ul class="list-inline">
+  <li class="h4">This item appears in the following rooms:</li>
+  <% @item.rooms.each do |room| %>
+    <li><%= link_to room.name, room_path(room) %></li>
+  <% end %>
+</ul>
+<%= render partial: "shared/show_stats", locals: {stats: @item.stat} %> 
+<%= link_to "Edit", edit_item_path(@item), class: 'btn btn-success' %>

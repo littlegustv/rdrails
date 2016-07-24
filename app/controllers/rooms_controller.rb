@@ -65,6 +65,9 @@ class RoomsController < ApplicationController
   private
 
   def room_params
-    params.permit(:name, :description, mobiles_attributes: [:id, :character_id, :room_id, :_destroy], exits_attributes: [:id, :room_id, :destination_id, :direction, :_destroy] )
+    params.permit(:name, :description, 
+      mobiles_attributes: [:id, :character_id, :room_id, :_destroy], 
+      exits_attributes: [:id, :room_id, :destination_id, :direction, :_destroy],
+      room_items_attributes: [:id, :room_id, :item_id, :_destroy] )
   end
 end

@@ -4,6 +4,7 @@
     <ul class="nav navbar-nav">
       <li><%= link_to "Characters", characters_path %></li>
       <li><%= link_to "Rooms", rooms_path %></li>
+      <li><%= link_to "Items", items_path %></li>
       <li>
 				<% if current_user %>
 	      	<%= link_to "Logout", destroy_user_session_path, method: :delete %>

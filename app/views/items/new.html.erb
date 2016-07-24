@@ -1,0 +1,4 @@
+<h1>New Item</h1>
+<%= form_for @item, url: items_path do |f| %>
+	<%= render partial: "shared/form", locals: {f: f} %>
+<% end %>

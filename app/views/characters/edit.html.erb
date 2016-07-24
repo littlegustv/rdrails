@@ -1,8 +1,6 @@
 <h1>Edit Character</h1>
-<%= form_for :character, url: character_path(@character), method: :patch do |f| %>
+<%= form_for @character, url: character_path(@character), method: :patch do |f| %>
   <div class="input-group">
-    <%= f.text_field :name, class: "form-control", placeholder: "Name..." %>
-    <%= f.text_field :description, class: "form-control", placeholder: "Description..."  %>
-    <%= f.submit "Save" , class: "form-control"  %>
+		<%= render partial: "shared/form", locals: {f: f} %>
   </div>
 <% end %>
