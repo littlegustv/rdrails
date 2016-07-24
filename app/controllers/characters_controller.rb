@@ -7,10 +7,17 @@ class CharactersController < ApplicationController
   end
 
   def create
-    @character = Character.new(character_params)
-    @character.created_by = current_user
+    if params[:id] && Character.exists?(params[:id].to_i)
+      @character = Character.find(params[:id])
+      @character.update(character_params)
+    else
+      @character = Character.new(character_params)
+    end
     if @character.save
-      redirect_to @character
+      respond_to do |format|
+        format.json { render :show }
+        format.html
+      end
     else
       redirect_to new_character_path
     end
@@ -28,6 +35,10 @@ class CharactersController < ApplicationController
 
   def show
     @character = Character.find(params[:id])
+    respond_to do |format|
+      format.json { render :show }
+      format.html
+    end
   end
 
   def edit
@@ -57,6 +68,8 @@ class CharactersController < ApplicationController
   private
 
   def character_params
-    params.require(:character).permit(:name, :description, :stat_attributes => [:hitpoints, :manapoints, :attackspeed, :damagereduction])
+    params.permit(:id, :name, :description, 
+      :stat_attributes => [:hitpoints, :manapoints, :attackspeed, :damagereduction],
+      :inventory_items_attributes => [:id, :_destroy, :item_id, :character_id])
   end
 end

@@ -1,10 +1,12 @@
 redemption on rails:
   ☐ add stat, item, area and affect models
+    ☐ add area, dropdown to show rooms IN area
+    ☐ add skills, race and class (figure out hierarchy)
     ✔ player belongs_to stat @done (16-07-24 11:54)
     ✔ room has_many items -> through ground_items @done (16-07-24 12:27)
-    ☐ player has_many items -> requires angular again (probably)
+    ✔ player has_many items -> requires angular again (probably) @done (16-07-24 15:16)
       ✔ item belongs_to stat @done (16-07-24 11:54)
-  ☐ character editor (dynamic) -> has_many items, angular
+  ✔ character editor (dynamic) -> has_many items, angular @done (16-07-24 15:16)
   ☐ improve layout and display of editors (inline, drag & drop, etc.);
   ☐ figure out composite aggregation of stats (i.e. character + equipment_items + affects + room_affects)
   ☐ user accounts
@@ -13,3 +15,23 @@ redemption on rails:
     ✔ role @done (16-07-24 10:51)
     ☐ cancan
   ☐ character table not in schema - look up how to reload schema?
+
+
+  ☐ area
+    -> has_many rooms (room.area_id = 1,2...)
+    -> string 'name'
+    -> descriptors? ('forest' ?)
+  ☐ affect
+    -> has_many character_affects
+    -> has_many characters -> through character_affects (and visa versa)
+    -> integer 'duration' (-1  = infinite -> or just use size of block & refresh?)
+    -> CharacterAffect
+      -> integer 'timer'
+  ☐ race/class
+    ☐ character belongs_to race/class
+    ☐ has_many skills through race, class, etc.?
+  ☐ skills
+    ☐ belongs_to race/class
+    ☐ level
+    ☐ creation points
+    ☐ cost? lag? what else can be stored in db?

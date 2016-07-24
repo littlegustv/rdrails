@@ -6,4 +6,7 @@ class Item < ActiveRecord::Base
   has_many :room_items
   has_many :rooms, through: :room_items, class_name: "Room"
 
+  has_many :inventory_items
+  has_many :characters, through: :inventory_items, class_name: "Character"
+
 end

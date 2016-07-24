@@ -1,6 +1,41 @@
-<h1>Edit Character</h1>
-<%= form_for @character, url: character_path(@character), method: :patch do |f| %>
-  <div class="input-group">
-		<%= render partial: "shared/form", locals: {f: f} %>
+<div class="row">
+  <div class="col-sm-6">
+    <div class="panel panel-default" ng-controller="editCharacter">
+    	<div class="panel-heading">
+    		<h2>Edit <%= @character.name %></h2>
+    	</div>
+    	<div class="panel-body">
+    				<div class="input-group">
+              <label for="" class="control-label">Name</label><input type="text" ng-model="character.name" class="form-control">
+            </div>
+            <div class="input-group">
+              <label for="" class="control-label">Description</label><input type="text" class="form-control" ng-model="character.description">
+            </div>
+            <label for="" class="control-label">Stats</label>
+            <table>
+              <tbody>
+                <tr ng-repeat="(k, v) in character.stat track by $index">
+                  <th>{{ k }}</th>
+                  <td><input type="number" ng-model="character.stat[k]"></td>
+                </tr>
+              </tbody>
+            </table>
+            <br>
+            <label for="" class="control-label">Items</label>
+            <div ng-repeat="inventory_item in character.inventory_items" class="input-group">
+              <select name="" id="" ng-model="inventory_item.item_id" class="form-control" ng-options="item.id as item.name for item in items"></select>
+              <span class="input-group-btn" ng-click="destroy(inventory_item);">
+                <span class="btn btn-default" ng-class="{'btn-danger' : inventory_item._destroy}">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </span>
+              </span>
+            </div>
+            <span class="btn btn-primary" ng-click="add(character.inventory_items);">Add Item</span>
+    	</div>
+      <div class="panel-footer">
+          <div class="panel-footer"><span class="btn btn-default" ng-click="save();">Save</span></div>
+      </div>
+    </div>
+    <input type="hidden" value="<%= @character.id %>" id="characterId">
   </div>
-<% end %>
+</div>

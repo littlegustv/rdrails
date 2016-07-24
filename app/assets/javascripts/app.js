@@ -29,6 +29,35 @@ rdApp.controller('roomsCtrl', function ($scope, Room) {
   $scope.rooms = Room.query();
 });
 
+rdApp.controller('editCharacter', function ($scope, Character, Item) {
+  var characterId = $('#characterId').val();
+  if (characterId) {
+    Character.get({id: characterId}, function (character) {
+      $scope.character = character;
+      if ($scope.character.inventory_items.length <= 0) $scope.character.inventory_items = [{}];
+    });
+  }
+
+  $scope.save = function () {
+    $scope.character.stat_attributes = $scope.character.stat;
+    $scope.character.inventory_items_attributes = $scope.character.inventory_items.filter( function (m) { return m.item_id });
+    delete $scope.character['stat'];
+    delete $scope.character['inventory_items'];
+    var redirect = $scope.character.id === undefined;
+    $scope.character = Character.save($scope.character, function (character) {
+    });
+  }
+
+  $scope.destroy = function (mobile) {
+    mobile._destroy = true;
+  }
+
+  $scope.add = function (array) {
+    if ($scope.character) array.push({});
+  }
+  $scope.items = Item.query();
+});
+
 rdApp.controller('editRoom', function ($scope, $location, Room, Character, Item) {
 	$scope.directions = ["North", "South", "East", "West", "Up", "Down"];
 
