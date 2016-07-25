@@ -1,4 +1,4 @@
 <h1>New Character</h1>
-<%= form_for @character, url: characters_path do |f| %>
+<%= form_for :character, url: characters_path do |f| %>
 	<%= render partial: "shared/form", locals: {f: f} %>
 <% end %>

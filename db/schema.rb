@@ -11,10 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160724183855) do
+ActiveRecord::Schema.define(version: 20160725164006) do
 
-# Could not dump table "characters" because of following NoMethodError
-#   undefined method `[]' for nil:NilClass
+  create_table "characters", force: :cascade do |t|
+    t.string   "name"
+    t.text     "description"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.integer  "created_by_id"
+    t.integer  "stat_id"
+  end
 
   create_table "exits", force: :cascade do |t|
     t.string   "direction"
@@ -41,9 +47,6 @@ ActiveRecord::Schema.define(version: 20160724183855) do
     t.integer "room_id",      null: false
     t.integer "character_id", null: false
   end
-
-# Could not dump table "old_characters" because of following NoMethodError
-#   undefined method `[]' for nil:NilClass
 
   create_table "room_items", force: :cascade do |t|
     t.integer "room_id"
