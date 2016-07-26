@@ -17,6 +17,15 @@ redemption on rails:
   ☐ character table not in schema - look up how to reload schema?
 
 
+  ☐ rails 5.0
+    ✔ upgrade app @done (16-07-26 15:50)
+      ☐ HOW DO I SYNC RAILS WITH A REAL-TIME PROCESS (or visa versa)
+    ☐ add websocket functionality
+      ☐ on my other websocket app, try having a separate presistent process communicate with chatroom (somehow?)
+      (basic)
+      ☐ user -> has_one 'active_character' (belongs to?)
+      ☐ display "User.active.name cgossips 'Message'" to all users (ignoring rooms for now)
+    ☐ figure out heroku hosting
   ☐ area
     ✔ -> has_many rooms (room.area_id = 1,2...) @done (16-07-26 15:04)
     ✔ -> string 'name' @done (16-07-26 15:04)

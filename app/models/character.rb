@@ -1,4 +1,4 @@
-class Character < ActiveRecord::Base
+class Character < ApplicationRecord
 
   has_many :mobiles
   has_many :rooms, through: :mobiles, class_name: "Room"

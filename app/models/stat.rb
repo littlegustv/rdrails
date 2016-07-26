@@ -1,4 +1,4 @@
-class Stat < ActiveRecord::Base
+class Stat < ApplicationRecord
 	def show
 		{
 			hitpoints: hitpoints,

@@ -1,4 +1,4 @@
-class Item < ActiveRecord::Base
+class Item < ApplicationRecord
 	
 	belongs_to :stat
   accepts_nested_attributes_for :stat, allow_destroy: true
