@@ -12,6 +12,16 @@
 				  <%= link_to('Login', new_user_session_path)  %>
 	      <% end %>
       </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Areas
+        <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <% Area.all.each do |area| %>
+            <li><%= link_to area.name, rooms_path(area_id: area.id) %></li>
+          <% end %>
+          <li><%= link_to "+ New", new_area_path %></li>
+        </ul>
+      </li>
     </ul>
   </div>
 </nav>

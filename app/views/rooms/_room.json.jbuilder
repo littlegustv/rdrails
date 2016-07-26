@@ -1,4 +1,4 @@
-json.(room, :id, :name, :description)
+json.(room, :id, :name, :description, :area_id)
 
 json.mobiles room.mobiles do |mobile|
   json.(mobile, :id, :character_id)

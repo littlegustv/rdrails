@@ -9,6 +9,9 @@
         <div class="input-group">
           <label for="" class="control-label">Description</label><input type="text" class="form-control" ng-model="room.description">
         </div>
+        <div class="input-group">
+          <label for="" class="control-label">Area</label><select class="form-control" ng-model="room.area_id" ng-options="area.id as area.name for area in areas"></select>
+        </div>
         <br>
         <label for="" class="control-label">Mobiles</label>
         <div ng-repeat="mobile in room.mobiles" class="input-group">

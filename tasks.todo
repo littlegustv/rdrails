@@ -18,15 +18,15 @@ redemption on rails:
 
 
   ☐ area
-    -> has_many rooms (room.area_id = 1,2...)
-    -> string 'name'
-    -> descriptors? ('forest' ?)
+    ✔ -> has_many rooms (room.area_id = 1,2...) @done (16-07-26 15:04)
+    ✔ -> string 'name' @done (16-07-26 15:04)
+    ☐ -> descriptors? ('forest' ?)
   ☐ affect
-    -> has_many character_affects
-    -> has_many characters -> through character_affects (and visa versa)
-    -> integer 'duration' (-1  = infinite -> or just use size of block & refresh?)
-    -> CharacterAffect
-      -> integer 'timer'
+    ☐ -> has_many character_affects
+    ☐ -> has_many characters -> through character_affects (and visa versa)
+    ☐ -> integer 'duration' (-1  = infinite -> or just use size of block & refresh?)
+    ☐ -> CharacterAffect
+      ☐ -> integer 'timer'
   ☐ race/class
     ☐ character belongs_to race/class
     ☐ has_many skills through race, class, etc.?

@@ -4,6 +4,10 @@ class CharactersController < ApplicationController
   def new
     @character = Character.new
     @character.stat = Stat.new
+    respond_to do |format|
+      format.html { render :edit }
+      format.json { render :show }
+    end
   end
 
   def create
@@ -12,6 +16,7 @@ class CharactersController < ApplicationController
       @character.update(character_params)
     else
       @character = Character.new(character_params)
+      @character.update!(created_by: current_user)
     end
     if @character.save
       respond_to do |format|
@@ -68,8 +73,6 @@ class CharactersController < ApplicationController
   private
 
   def character_params
-    params.permit(:id, :name, :description, 
-      :stat_attributes => [:hitpoints, :manapoints, :attackspeed, :damagereduction],
-      :inventory_items_attributes => [:id, :_destroy, :item_id, :character_id])
+    params.permit(:id, :name, :description,  :stat_attributes => [:hitpoints, :manapoints, :attackspeed, :damagereduction],  :inventory_items_attributes => [:id, :_destroy, :item_id, :character_id])
   end
 end
