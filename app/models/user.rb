@@ -7,8 +7,4 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  def speak(msg)
-    ActionCable.server.broadcast "clients_#{id}", message: msg
-  end
-
 end

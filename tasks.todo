@@ -17,10 +17,27 @@ redemption on rails:
   ☐ character table not in schema - look up how to reload schema?
 
 
+gameroom:
+  id, name, description, exits {"direction": id}
+mobile:
+  character_id, user_id, room_id
+character:
+  id, name, description, stats (*)
+
+ ☐ custom game objects
+   ☐ 0. game start
+     ☐ Room.all.each { create GameRoom }, exits: [North: Room_iD], rooms: {id: GameRoom, id2: GameRoom2}
+   ☐ 1. login
+     ☐ find User by ID
+     ☐ if User.mobile (in DB) -> create mobile
+     ☐ 
+
   ☐ rails 5.0
     ☐ need independant game objects
       ☐ use rails to save/load, but need to generate objects that can be updated in memory
       ☐ I think I am ok with this?
+
+      ☐ mobiles need UID
     ✔ upgrade app @done (16-07-26 15:50)
       ✔ HOW DO I SYNC RAILS WITH A REAL-TIME PROCESS (or visa versa) @done (16-07-29 09:39)
     ✔ add websocket functionality @done (16-07-29 09:40)
