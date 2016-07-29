@@ -1,20 +1,2 @@
-<h1><%= @room.name %></h1>
-<p><%= @room.description %></p>
-<ul class="list-inline">
-  <% @room.characters.each do |c| %>
-    <li><%= link_to c.name, character_path(c) %> is here.</li>
-  <% end %>
-</ul>
-<ul style="list-style: none;">
-	<% @room.room_items.each do |room_item| %>
-		<li><%= link_to "#{indefinite_article(room_item.item.name)} is here", item_path(room_item.item) %></li>
-	<% end %>
-</ul>
-<ul class="list-inline">
-	<li class="h4">Exits</li>
-	<% @room.exits.each do |exit| %>
-		<li><%= link_to "[#{exit.direction}]", room_path(exit.destination) %></li>
-	<% end %>
-</ul>
-
+<%= render partial: "room_display" %>
 <%= link_to "Edit", edit_room_path(@room), class: 'btn btn-success' %>

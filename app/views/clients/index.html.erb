@@ -1,0 +1,11 @@
+<div class="row">
+  <div class="col-sm-12">
+    <div class="client-wrapper">
+      <div id="client"></div>
+    </div>
+    <%=form_tag 'client', method: "GET", remote: true, authenticity_token: true, id: 'redemption-form'  do %>
+      <%= text_field_tag :content, "", class: "form-control", id: "redemption-input", autocomplete: "off" %>
+      <%= submit_tag "send", class: "btn btn-primary", data: {send: "message"}, style: 'display: none'%>
+    <%end%>
+  </div>
+</div>

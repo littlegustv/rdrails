@@ -1,0 +1,12 @@
+.client-wrapper{ 
+  margin-bottom: 10px;
+  height: calc(100vh - 130px);
+  position: relative;
+  overflow-y: hidden;
+}
+
+#client {
+  bottom: 0px;
+  position: absolute;
+  width: 100%;
+}

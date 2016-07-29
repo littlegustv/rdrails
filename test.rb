@@ -1,23 +1,16 @@
-user = nil
+require './game.rb'
+game = Game.new
 
-while user.nil?
-  puts "What is your Character name?"
-  Character.all.each do |character|
-    puts "This one? --> #{character.name}"
-  end
-  attempt = gets.chomp
-  if Character.where(name: attempt).count > 0
-    user = Character.where(name: attempt).first
-    puts "You have chosen: #{user.name}"
-  end
-end
+Rails.logger = Logger.new(STDOUT)
 
-@steps_taken = 0
-while true
-  puts "You have taken #{@steps_taken}"
-  steps_to_take = gets.chomp
-  @steps_taken += steps_to_take
-  if @steps_taken > 100
-    user.update(name: "#{user.name} - fleet of foot")
-  end
-end
+ActionCable.server.pubsub.subscribe("server", 
+  ->(command) {
+    command = JSON.parse(command)
+    game.command(command)
+  }, 
+  ->(command){
+    puts "Subscribed: #{command}"
+  }
+)
+
+game.run
