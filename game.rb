@@ -13,6 +13,12 @@ class GameRoom
     self.mobiles.map { |mobile| mobile.character }
   end
 
+  def update(dt)
+    @mobiles.each do |mobile|
+      mobile.update dt
+    end
+  end
+
   def display
     display = %(
       <h1>#{name}</h1>
@@ -40,6 +46,8 @@ class GameMobile
     @user_id = user_id
     @character = character
     @room = room
+    @commands = []
+    @lag = 0
     @room.mobiles.push(self)
   end
 
@@ -52,6 +60,50 @@ class GameMobile
     else
       return "You can't go that way."
     end
+  end
+
+  def update(dt)
+    if @lag <= 0
+      if (cmd = @commands.pop)
+        self.handleCommand(cmd)
+      end
+    else
+      @lag -= dt
+    end
+  end
+
+  def handleCommand(c)
+    cmd = c["message"]
+    
+    puts "Handling command #{c}"
+
+    case cmd
+    when "look"
+      speak room.display
+    when *["north", "south", "east", "west", "up", "down"]
+      result = move(cmd.humanize)
+     #@players.select{ |_, p| p != u && p.room == u.room }.each{ |_, p| p.speak "#{u.character.name} leaves #{cmd}."} if move == "You move #{cmd.humanize}."
+      speak(channel, move)
+     #@players.select{ |_, p| p != u && p.room == u.room }.each{ |_, p| p.speak "#{u.character.name} has arrived."} if move == "You move #{cmd.humanize}."
+      @commands.push({"message" => "look", "user" => user_id }) if move == "You move #{cmd.humanize}."
+    #when "quit"
+      #@players.delete(u.id)
+      # need some way of saving the mobile without it still showing up in game... just an 'active' field? 
+      # for now just delete it, you will just 'restart' in beginning room eahc login
+      #u.mobile.destroy
+    when /say\s(.+)/
+      string = cmd.match(/say\s(.+)/)[1]
+      speak "You say '#{string}'"
+      #@players.each { |_, p| p.speak "#{u.character.name} says '#{string}'" if p != u && p.room == u.room }
+    else
+      speak("Huh?")
+    end
+
+  end
+
+  def command(cmd)
+    puts "Adding command to queue"
+    @commands.push(cmd)
   end
 
   def speak(msg)
@@ -113,22 +165,24 @@ class Game
   end
 
   def run
+    dt = 1.0 / 60
     loop {
-      if (cmd = @commands.pop)
-        handleCommand(cmd)
+      @rooms.each do |_, room|
+        room.update(dt)
       end
+#      if (cmd = @commands.pop)
+#        handleCommand(cmd)
+#      end
       sleep 1.0 / 60
     }
   end
 
-  def handleCommand(c)
-    puts "Handling command: #{c.inspect}"
-    channel = "clients_#{c['user']}"
-    cmd = c["message"]
-    #u = players = @players.select { |player| player.id == c['user'] }.first.try
-    #u = u.count > 0 ? u.first : nil
+  def command(cmd)
+    c = cmd
     if u = @players[c['user']]
+      puts "User found."
     else
+      puts "User created."
       user = User.find(c['user'])
       if @players[c['user']] 
         u = player[c['user']]
@@ -138,36 +192,9 @@ class Game
       else
         puts "ERROR: You should have a character,yes you should."
         speak channel, message: "Error: who are you?"
+        return
       end
     end
-
-    case cmd
-    when u.nil?
-      speak(channel, 'WHO ARE YOU?')
-    when "look"
-      u.speak u.room.display
-    when *["north", "south", "east", "west", "up", "down"]
-      move = u.move(cmd.humanize)
-      @players.select{ |_, p| p != u && p.room == u.room }.each{ |_, p| p.speak "#{u.character.name} leaves #{cmd}."} if move == "You move #{cmd.humanize}."
-      speak(channel, move)
-      @players.select{ |_, p| p != u && p.room == u.room }.each{ |_, p| p.speak "#{u.character.name} has arrived."} if move == "You move #{cmd.humanize}."
-      @commands.push({"message" => "look", "user" => u.user_id }) if move == "You move #{cmd.humanize}."
-    #when "quit"
-      #@players.delete(u.id)
-      # need some way of saving the mobile without it still showing up in game... just an 'active' field? 
-      # for now just delete it, you will just 'restart' in beginning room eahc login
-      #u.mobile.destroy
-    when /say\s(.+)/
-      string = cmd.match(/say\s(.+)/)[1]
-      u.speak "You say '#{string}'"
-      @players.each { |_, p| p.speak "#{u.character.name} says '#{string}'" if p != u && p.room == u.room }
-    else
-      u.speak("Huh?")
-    end
-
-  end
-
-  def command(cmd)
-    @commands.push(cmd)
+    u.command(cmd)
   end
 end

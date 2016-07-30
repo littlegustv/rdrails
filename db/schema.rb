@@ -21,9 +21,9 @@ ActiveRecord::Schema.define(version: 20160729140151) do
   create_table "characters", force: :cascade do |t|
     t.string   "name"
     t.text     "description"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-    t.integer  "created_by_id"
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.         "created_by_id", default: "1"
     t.integer  "stat_id"
   end
 
@@ -52,6 +52,14 @@ ActiveRecord::Schema.define(version: 20160729140151) do
     t.integer "room_id",      null: false
     t.integer "character_id", null: false
     t.integer "user_id"
+  end
+
+  create_table "old_characters", force: :cascade do |t|
+    t.string   "name"
+    t.text     "description"
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+    t.         "created_by",  default: "1"
   end
 
   create_table "room_items", force: :cascade do |t|
