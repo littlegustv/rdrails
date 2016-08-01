@@ -1,8 +1,17 @@
+require './db.rb'
+
 class Game
   
+  attr_reader :rooms, :characters
+
+  include SQLITE
+
   def initialize(redis)
     @users = []
     @REDIS = redis
+    initDB
+    loadRooms
+    loadCharacters
   end
 
   def send(channels, message)
@@ -23,10 +32,14 @@ class Game
 
   def login(id)
     if !user(id)
-      @users.push(User.new(id, $game))
+      m_info = loadPlayerMobileData(id)
+      u = Mobile.new(id, m_info[0], m_info[1], $game)
+      #u = User.new(id, $game)
+      @users.push(u)
     else
-      puts "Already logged in"
+      u = user(id)
     end
+    return u
   end
 
   def user(id)

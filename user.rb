@@ -1,8 +1,10 @@
-class User
-  def initialize(id, game)
+class Mobile
+  def initialize(id, room_id, character_id, game)
     @id = id
     @commands = []
     @lag = 0
+    @room_id = room_id
+    @character_id = character_id
     @game = game
   end
 
@@ -26,11 +28,20 @@ class User
     @game.send("clients_#{@id}", {user: @id, message: msg})
   end
 
+  def room
+    $game.rooms[@room_id]
+  end
+
   def handle(cmd)
+    puts room.exits.keys
     case cmd
     when nil
     when "look"
-      send("You look around.")
+      send(room.look(self, :long))
+    when *(["north", "south", "east", "west", "up", "down"] & room.exits.keys.map{ |k| k.downcase })
+      @room_id = room.exits[cmd.capitalize]
+      send("You move #{cmd.capitalize}.")
+      @commands.push({user: @id, command: "look"})
     else
       send("Huh?")
     end

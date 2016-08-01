@@ -2,6 +2,8 @@ require 'redis'
 require 'connection_pool'
 require 'json'
 require 'thread'
+require './room.rb'
+require './character.rb'
 require './user.rb'
 require './game.rb'
 
@@ -20,6 +22,9 @@ Thread.new do
           $game.login data['user']
         else
           if (u = $game.user(data['user']))
+            u.command(data)
+          else
+            u = $game.login data['user']
             u.command(data)
           end
         end
