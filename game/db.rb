@@ -21,26 +21,41 @@ module SQLITE
     rows = @db.execute "select id, name, description from rooms"
     rows.each do |row|
       id = row[0]
+      
       exits = @db.execute "select direction, destination_id from exits where room_id = ?", id
       room_exits = {}
       exits.each do |exit|
         room_exits[exit[0]] = exit[1]
-      end
-      @rooms[id] = Room.new(row[1], row[2], room_exits)
+      end      
+
+      @rooms[id] = Room.new(id, row[1], row[2], room_exits, self)
     end
     puts @roomss
   end
 
+  def loadMobiles
+    rows = @db.execute "select id, room_id, character_id from mobiles where user_id is null"
+    @mobiles = []
+    rows.each do |row|
+      @mobiles.push(Mobile.new(row[0], row[1], row[2], self))
+    end
+  end
+
   def loadCharacters
     @characters = {}
-    rows = @db.execute "select id, name, description from characters"
+    rows = @db.execute "select id, name, description, stat_id from characters"
     rows.each do |row|
-      @characters[row[0]] = Character.new(row[1], row[2])
+      stat = @db.execute "select attackspeed, damagereduction, hitpoints, manapoints from stats where id = ?", row[3]
+      stat = Hash[['attackspeed', 'damagereduction', 'hitpoints', 'manapoints'].zip(stat[0])]
+      puts stat
+      @characters[row[0]] = Character.new(row[1], row[2], stat)
     end
   end
 
   def loadPlayerMobileData(user_id)
-    rows = @db.execute "select room_id, character_id from mobiles where user_id = ?", user_id
+    user_active = @db.execute "select active_id from users where id = ?", user_id
+
+    rows = @db.execute "select id, room_id, character_id from mobiles where id = ?", user_active[0]
     if rows.count > 0
       rows[0]
     else

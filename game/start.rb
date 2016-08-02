@@ -26,6 +26,8 @@ Thread.new do
         data = JSON.parse(msg)
         if data['message'] == 'login'
           $game.login data['user']
+        elsif data['message'] == 'logout'
+          $game.logout data['user']
         else
           if (u = $game.user(data['user']))
             u.command(data)
