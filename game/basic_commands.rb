@@ -12,9 +12,9 @@ module BasicCommands
     string = "'#{args.join(' ')}'"
     @game.emit do |u|
       if u.id == @id
-        "You say #{string}"
+        "<span class='say'>You say #{string}</span>"
       elsif u.room_id == @room_id
-        "#{render(u)} says #{string}"
+        "<span class='say'>#{render(u)} says #{string}</span>"
       end
     end
     return 0
