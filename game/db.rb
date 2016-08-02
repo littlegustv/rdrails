@@ -1,9 +1,19 @@
+SQLITEPATH = "/home/hellerb/Projects/rdrails/db/development.sqlite3"
+
 module SQLITE
 
   require 'sqlite3'
 
   def initDB
-    @db = SQLite3::Database.new "./db/development.sqlite3"
+    begin
+      @db = SQLite3::Database.new SQLITEPATH
+    rescue SQLite3::CantOpenException
+      puts "************************************** ALERT! ************************************"
+      puts "Cannot open Database File.  Make sure you have set the correct location in db.rb"
+      puts "Enter the complete path to the SQLITE db file, found in your db/ directory of your"
+      puts "rails project."
+      puts "**********************************************************************************"
+    end
   end
 
   def loadRooms

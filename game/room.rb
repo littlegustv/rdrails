@@ -7,7 +7,7 @@ class Room
     @exits = exits
   end
 
-  def look(from, format)
+  def render(from, format)
     %(
       <h4>#{name}</h4>
       <p>#{description}</p>

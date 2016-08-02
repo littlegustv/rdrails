@@ -14,7 +14,15 @@ class Game
     loadCharacters
   end
 
-  def send(channels, message)
+  def send
+    @users.each do |user|
+      if (msg = yield(user))
+        REDIS.with do |redis|
+          redis.publish "clients_#{user.id}", {user: user.id, message: msg}.to_json
+        end
+      end
+    end
+=begin
     Array(channels).each do |channel|
       puts "sending #{channel}, #{message.to_json}"      
       REDIS.with do |redis|
@@ -22,6 +30,7 @@ class Game
       end
       puts 'sent'
     end
+=end
   end
 
   def update(dt)
