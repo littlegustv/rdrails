@@ -24,20 +24,27 @@ mobile:
 character:
   id, name, description, stats (*)
 
- ☐ custom game objects
-   ☐ 0. game start
-     ☐ Room.all.each { create GameRoom }, exits: [North: Room_iD], rooms: {id: GameRoom, id2: GameRoom2}
-   ☐ 1. login
-     ☐ find User by ID
-     ☐ if User.mobile (in DB) -> create mobile
-     ☐ 
+  ☐ login/logout
+    ☐ player_character object; user can have multiple characters, only one active
+      ☐ workflow:
+        ☐ 1. user login
+        ☐ 2. user select character -> goes to client & autologin
+        ☐ 3. close active client window -> linkdead -> timeout -> quit ->
+        ☐ 4. manual quit -> 
+        ☐ 5. quit -> character becomes 'inactive', removed from GAME...
+          ☐ logout event; find user by id and remove mobile
+        ☐ 6. display in character list the ACTIVE character; make it impossible to switch without logging out
 
-  ☐ rails 5.0
-    ☐ need independant game objects
-      ☐ use rails to save/load, but need to generate objects that can be updated in memory
-      ☐ I think I am ok with this?
+  ✔ load stats @done (16-08-02 15:59)
+  ☐ combat loop
+  ☐ behavior object
 
-      ☐ mobiles need UID
+  ✔ rails 5.0 @done (16-08-02 12:46)
+    ✔ need independant game objects @done (16-08-02 12:42)
+      ✘ use rails to save/load, but need to generate objects that can be updated in memory @cancelled (16-08-02 12:42)
+      ✘ I think I am ok with this? @cancelled (16-08-02 12:42)
+
+      ✔ mobiles need UID @done (16-08-02 12:42)
     ✔ upgrade app @done (16-07-26 15:50)
       ✔ HOW DO I SYNC RAILS WITH A REAL-TIME PROCESS (or visa versa) @done (16-07-29 09:39)
     ✔ add websocket functionality @done (16-07-29 09:40)
