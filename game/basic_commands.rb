@@ -1,6 +1,6 @@
 module BasicCommands
   def self.extended(mod)
-    mod.commands = ["look", "north", "south", "east", "west", "up", "down", "who", "quit", "score", "say", "kill", "flee"]
+    mod.commands = ["look", "north", "south", "east", "west", "up", "down", "who", "quit", "score", "say", "kill", "flee", "rest", "wake", "quicken", "affects"]
   end
 
   def look(args = "")
@@ -45,6 +45,10 @@ module BasicCommands
   end
 
   def move(cmd)
+    if hasBehavior("Rest")
+      emit "Try standing up first."
+      return 0
+    end
     direction = cmd.to_s.capitalize
     if !room.exits.keys.include?(direction)
       @game.emit { |user| "You can't go that way." if is user }
@@ -83,19 +87,22 @@ module BasicCommands
   end
 
   def score(args)
-    @game.emit { |user| character.stats.map { |k, v| "<b>#{k}</b> - #{v}"}.join("<br>") if is user }
+    @game.emit { |user| "<h3>#{character.name}</h3>" + character.stats.map { |k, v| "<b>#{k}</b> - #{v} [#{stat(k)}]"}.join("<br>") if is user }
     return 0
   end
 
   def kill(args)
-    if @combat
+    if hasBehavior("Rest")
+      emit "You can't attack anyone while you are resting!"
+      return 0
+    elsif @combat
       @game.emit { |user| "You are already in combat!" if is user }
       return 0
     elsif args.count <= 0
       @game.emit { |user| "Kill whom?" if is user }
       return 0
     else
-      targets = @game.users.select { |user| !is(user) && user.room_id == @room_id && user.render(self).downcase.match(/\A#{args[0]}/)}
+      targets = @game.mobiles.select { |mobile| !is(mobile) && mobile.room_id == @room_id && mobile.render(self).downcase.match(/\A#{args[0]}/)}
       if targets.count <= 0
         @game.emit { |user| "You can't find them." if is user }
         return 0
@@ -120,7 +127,6 @@ module BasicCommands
       @game.emit { |user| "You aren't fighting anyone." if is user }
       return 0
     elsif rand(100) < 60
-      puts 'yeah'
       @game.emit do |user| 
         if is user 
           "You flee from combat!" 
@@ -133,9 +139,44 @@ module BasicCommands
       # move!
       return 1
     else
-      @game.emit { |user| "Panic! You could not escape!" if is user }
+      emit "Panic! You could not escape!"
       return 0
     end
+  end
+
+  def rest(args)
+    if @combat
+      emit "You can't rest while fighting."
+    elsif hasBehavior("Rest")
+      emit "You are already resting."
+    else
+      addBehavior(Rest)
+    end
+    return 0
+  end
+
+  def wake(args)
+    if !hasBehavior("Rest")
+      emit "You aren't resting"
+    else
+      removeBehavior("Rest")
+    end
+    return 0
+  end
+
+  def quicken(args)
+    if hasBehavior("Rest")
+      emit "Try waking up first!"
+      return 0
+    else
+      addBehavior(Quicken)
+      return 0.5
+    end
+  end
+
+  def affects(args)
+    emit @behaviors.select { |k, b| !b.duration.nil? }.map { |k, b| "#{k}: ... #{b.duration.to_i} >>> #{b.description}" }.join("<br>")
+    return 0
   end
 
 end

@@ -4,7 +4,8 @@ class Stat < ApplicationRecord
 			hitpoints: hitpoints,
 			manapoints: manapoints,
 			attackspeed: attackspeed,
-			damagereduction: damagereduction
+			damagereduction: damagereduction,
+      damage: damage
 		}
 	end
 end

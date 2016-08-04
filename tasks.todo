@@ -1,6 +1,6 @@
 redemption on rails:
-  ☐ add stat, item, area and affect models
-    ☐ add area, dropdown to show rooms IN area
+  ✔ add stat, item, area and affect models @done (16-08-04 12:45)
+    ✔ add area, dropdown to show rooms IN area @done (16-08-04 12:45)
     ☐ add skills, race and class (figure out hierarchy)
     ✔ player belongs_to stat @done (16-07-24 11:54)
     ✔ room has_many items -> through ground_items @done (16-07-24 12:27)
@@ -8,14 +8,7 @@ redemption on rails:
       ✔ item belongs_to stat @done (16-07-24 11:54)
   ✔ character editor (dynamic) -> has_many items, angular @done (16-07-24 15:16)
   ☐ improve layout and display of editors (inline, drag & drop, etc.);
-  ☐ figure out composite aggregation of stats (i.e. character + equipment_items + affects + room_affects)
-  ☐ user accounts
-    ✘ has_many characters through player_characters @cancelled (16-07-24 10:51)
-    ✔ character belongs_to user @done (16-07-24 10:51)
-    ✔ role @done (16-07-24 10:51)
-    ☐ cancan
-  ☐ character table not in schema - look up how to reload schema?
-
+  ✘ figure out composite aggregation of stats (i.e. character + equipment_items + affects + room_affects) @cancelled (16-08-04 12:45)
 
 gameroom:
   id, name, description, exits {"direction": id}
@@ -24,20 +17,15 @@ mobile:
 character:
   id, name, description, stats (*)
 
-  ☐ login/logout
-    ☐ player_character object; user can have multiple characters, only one active
-      ☐ workflow:
-        ☐ 1. user login
-        ☐ 2. user select character -> goes to client & autologin
-        ☐ 3. close active client window -> linkdead -> timeout -> quit ->
-        ☐ 4. manual quit -> 
-        ☐ 5. quit -> character becomes 'inactive', removed from GAME...
-          ☐ logout event; find user by id and remove mobile
-        ☐ 6. display in character list the ACTIVE character; make it impossible to switch without logging out
-
   ✔ load stats @done (16-08-02 15:59)
-  ☐ combat loop
-  ☐ behavior object
+  ✔ combat loop @done (16-08-04 12:10)
+  ✔ behavior object @done (16-08-04 12:45)
+  ✔ affects/behaviors are the SAME object (affects are duration-based behaviors?) @done (16-08-04 14:36)
+  ☐ load items, have stats inherit/combine all that together
+  ☐ add class to character, load skills modules as appropriate
+  ☐ handle death
+  ☐ reboot/reload button on rails site (sidekiq?)
+  ☐ figure out heroku hosting -> free heroku redis? postgresql!?
 
   ✔ rails 5.0 @done (16-08-02 12:46)
     ✔ need independant game objects @done (16-08-02 12:42)
@@ -52,22 +40,3 @@ character:
       (basic)
       ✔ user -> has_one 'active_character' (belongs to?) @done (16-07-29 12:06)
       ✘ display "User.active.name cgossips 'Message'" to all users (ignoring rooms for now) @cancelled (16-07-29 10:58)
-    ☐ figure out heroku hosting
-  ☐ area
-    ✔ -> has_many rooms (room.area_id = 1,2...) @done (16-07-26 15:04)
-    ✔ -> string 'name' @done (16-07-26 15:04)
-    ☐ -> descriptors? ('forest' ?)
-  ☐ affect
-    ☐ -> has_many character_affects
-    ☐ -> has_many characters -> through character_affects (and visa versa)
-    ☐ -> integer 'duration' (-1  = infinite -> or just use size of block & refresh?)
-    ☐ -> CharacterAffect
-      ☐ -> integer 'timer'
-  ☐ race/class
-    ☐ character belongs_to race/class
-    ☐ has_many skills through race, class, etc.?
-  ☐ skills
-    ☐ belongs_to race/class
-    ☐ level
-    ☐ creation points
-    ☐ cost? lag? what else can be stored in db?

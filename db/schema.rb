@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160802181840) do
+ActiveRecord::Schema.define(version: 20160804154008) do
 
   create_table "areas", force: :cascade do |t|
     t.string   "name"
@@ -74,6 +74,7 @@ ActiveRecord::Schema.define(version: 20160802181840) do
     t.integer  "damagereduction"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+    t.integer  "damage"
   end
 
   create_table "users", force: :cascade do |t|

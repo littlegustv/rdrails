@@ -20,7 +20,8 @@ class Game
     @users.each do |user|
       if (msg = yield(user))
         REDIS.with do |redis|
-          redis.publish "clients_#{user.user_id}", {user: user.user_id, message: msg}.to_json
+          redis.publish "clients_#{user.user_id}", {user: user.user_id, message: msg + user.prompt}.to_json
+          #redis.publish "clients_#{user.user_id}", {user: user.user_id, message: user.prompt}.to_json
         end
       end
     end
@@ -43,7 +44,15 @@ class Game
 
   def do_round
     @users.each do |user|
+      user.combat_buffer = ""
+    end
+    @users.each do |user|
       user.do_round()
+    end
+    emit do |user|
+      if user.combat_buffer.length > 0
+        user.combat_buffer
+      end
     end
   end
 

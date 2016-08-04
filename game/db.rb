@@ -45,10 +45,19 @@ module SQLITE
     @characters = {}
     rows = @db.execute "select id, name, description, stat_id from characters"
     rows.each do |row|
-      stat = @db.execute "select attackspeed, damagereduction, hitpoints, manapoints from stats where id = ?", row[3]
-      stat = Hash[['attackspeed', 'damagereduction', 'hitpoints', 'manapoints'].zip(stat[0])]
-      puts stat
+      stat = @db.execute "select attackspeed, damagereduction, hitpoints, manapoints, damage from stats where id = ?", row[3]
+      stat = Hash[['attackspeed', 'damagereduction', 'hitpoints', 'manapoints', 'damage'].zip(stat[0])]
       @characters[row[0]] = Character.new(row[1], row[2], stat)
+    end
+  end
+
+  def loadItems
+    @items = {}
+    rows = @db.execute "select id, name, description, stat_id from items"
+    rows.each do |row|
+      stat = @db.execute "select attackspeed, damagereduction, hitpoints, manapoints, damage from stats where id = ?", row[3]
+      stat = Hash[['attackspeed', 'damagereduction', 'hitpoints', 'manapoints', 'damage'].zip(stat[0])]
+      @items[row[0]] = Item.new(row[1], row[2], stat)
     end
   end
 

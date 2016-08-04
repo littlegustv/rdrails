@@ -1,6 +1,7 @@
 class Mobile
-  attr_reader :id, :room_id, :commands, :user_id, :start, :combat
-  attr_writer :commands, :combat
+  attr_reader :id, :room_id, :commands, :user_id, :start, :combat, :combat_buffer
+  attr_writer :commands, :combat, :combat_buffer
+  attr_accessor :behaviors, :affects
 
   def initialize(id, room_id, character_id, game, user_id = nil)
     @id = id
@@ -12,23 +13,81 @@ class Mobile
     @game = game
     @combat = nil
     @commands = [] #???
+    @combat_buffer = ""
+    @behaviors = {}
     extend BasicCommands
   end
 
-  def update(dt)
+  def prompt
+    "<p>[PROMPT] #{character.stats['hitpoints']}hp</p>"
+  end
 
+  def addBehavior(behavior)
+    b = behavior.new(self)
+    @behaviors[behavior.to_s] = b
+    b.onStart
+  end
+
+  def hasBehavior(keys)
+    keys = Array(keys)
+    keys.each do |key|
+      if @behaviors.key? key
+        return true
+      end
+    end
+    return false
+  end
+
+  def removeBehavior(key)
+    if @behaviors.key? key
+      @behaviors[key].onEnd
+      @behaviors.delete(key)
+    end
+  end
+
+  def update(dt)
     if @lag > 0
       @lag -= dt
     elsif (c = @command_queue.pop)
       handle(c['message'])
     end
+    @behaviors.each{ |k, b| b.update(dt) }
     # that's the command part, below we have the combat, which behaves by the same rules for everyone
   end
 
   def do_round
     if @combat
-      @game.emit { |user| "You are in combat with #{@combat.render(self)}!" if is user }
+      do_hit
+      10.times do |i|
+        n = rand(10) + i * 10
+        if n < stat("attackspeed")
+          do_hit
+        end
+      end
+
+      @behaviors.each do |k, b|
+        b.onCombat
+      end
     end
+  end
+
+  def emit(msg)
+    @game.emit { |user| msg if is user }
+  end
+
+  def do_hit
+    damage = rand(character.stats["damage"]) + character.stats["damage"]
+    @combat.do_damage(damage)
+    @combat.combat_buffer += "#{render(@combat)}'s wobbly #{noun} bruises you, dealing #{damage} damage.<br>"
+    @combat_buffer += "Your wobbly #{noun} bruises #{@combat.render(self)}, dealing #{damage} damage.<br>"
+  end
+
+  def noun
+    "entangle"
+  end
+
+  def do_damage(n)
+    character.stats["hitpoints"] -= n
   end
 
   def command(cmd)
@@ -37,6 +96,12 @@ class Mobile
 
   def is(user)
     @user_id == user.user_id
+  end
+
+  def stat(key)
+    if character.stats[key]
+      character.stats[key] + @behaviors.map{ |k, b| b.stat(key) }.reduce(:+).to_i
+    end
   end
 
   def room
