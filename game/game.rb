@@ -57,7 +57,6 @@ class Game
     end
   end
 
-
   def login(id)
     if !user(id)
       m_info = loadPlayerMobileData(id)

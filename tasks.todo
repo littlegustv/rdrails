@@ -43,6 +43,7 @@ character:
       ✔ user -> has_one 'active_character' (belongs to?) @done (16-07-29 12:06)
       ✘ display "User.active.name cgossips 'Message'" to all users (ignoring rooms for now) @cancelled (16-07-29 10:58)
 
+
 thief skills:
 
 Level  1: backstab            76%      dagger              75%      
