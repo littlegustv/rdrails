@@ -1,7 +1,7 @@
 class Mobile
-  attr_reader :id, :room_id, :commands, :user_id, :start, :combat, :combat_buffer
+  attr_reader :id, :room_id, :commands, :user_id, :start, :combat, :combat_buffer, :character_id
   attr_writer :commands, :combat, :combat_buffer
-  attr_accessor :behaviors, :affects
+  attr_accessor :behaviors, :affects, :inventory
 
   def initialize(id, room_id, character_id, game, user_id = nil)
     @id = id
@@ -15,11 +15,22 @@ class Mobile
     @commands = [] #???
     @combat_buffer = ""
     @behaviors = {}
+    @inventory = []
     extend BasicCommands
   end
 
   def prompt
     "<p>[PROMPT] #{character.stats['hitpoints']}hp</p>"
+  end
+
+  def addItem(item)
+    @inventory.push(item)
+  end
+
+  def removeItem(name)
+    item = @inventory.select { |item| item.match(/\A#{name}.*/) }.first    
+    @inventory.delete(item)
+    item
   end
 
   def addBehavior(behavior)
@@ -100,7 +111,7 @@ class Mobile
 
   def stat(key)
     if character.stats[key]
-      character.stats[key] + @behaviors.map{ |k, b| b.stat(key) }.reduce(:+).to_i
+      character.stats[key] + @behaviors.map{ |k, b| b.stat(key) }.reduce(:+).to_i + @inventory.map { |i| i.stat(key) }.reduce(:+).to_i # fix me: should use equipment, currently using inventory
     end
   end
 

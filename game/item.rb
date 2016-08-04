@@ -5,4 +5,8 @@ class Item
     @description = description
     @stats = stats
   end
+
+  def stat(key)
+    @stats[key] || 0
+  end
 end

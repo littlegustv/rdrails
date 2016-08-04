@@ -21,11 +21,13 @@ character:
   ✔ combat loop @done (16-08-04 12:10)
   ✔ behavior object @done (16-08-04 12:45)
   ✔ affects/behaviors are the SAME object (affects are duration-based behaviors?) @done (16-08-04 14:36)
-  ☐ load items, have stats inherit/combine all that together
+  ✔ load items, have stats inherit/combine all that together @done (16-08-04 15:34)
+  ☐ add equipment slots
   ☐ add class to character, load skills modules as appropriate
   ☐ handle death
   ☐ reboot/reload button on rails site (sidekiq?)
   ☐ figure out heroku hosting -> free heroku redis? postgresql!?
+  ☐ handle SAVING of players
 
   ✔ rails 5.0 @done (16-08-02 12:46)
     ✔ need independant game objects @done (16-08-02 12:42)
@@ -40,3 +42,22 @@ character:
       (basic)
       ✔ user -> has_one 'active_character' (belongs to?) @done (16-07-29 12:06)
       ✘ display "User.active.name cgossips 'Message'" to all users (ignoring rooms for now) @cancelled (16-07-29 10:58)
+
+thief skills:
+
+Level  1: backstab            76%      dagger              75%      
+          haggle              75%      peek                12%      
+          polearm             85%      recall              61%      
+          scrolls             12%      staves              12%      
+          wands               12%      whip                12%      
+Level  3: dirt kicking        75%      
+Level  5: hide                75%      steal               75%      
+          trip                75%      
+Level  6: dodge               75%      lore                 7%      
+Level  7: pick lock            6%      shadow               6%      
+Level  8: envenom              5%      
+Level 11: disarm              75%      
+Level 12: second attack        1%      sneak               39%      
+Level 18: enhanced damage    n/a      
+Level 23: living stone       n/a      
+Level 30: craft item         n/a

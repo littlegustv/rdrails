@@ -37,7 +37,21 @@ module SQLITE
     rows = @db.execute "select id, room_id, character_id from mobiles where user_id is null"
     @mobiles = []
     rows.each do |row|
-      @mobiles.push(Mobile.new(row[0], row[1], row[2], self))
+      m = Mobile.new(row[0], row[1], row[2], self)
+      @mobiles.push(m)
+      loadInventory(m)
+    end
+  end
+
+  def loadInventory(m)
+    items = @db.execute "select item_id from inventory_items where character_id = ?", m.character_id
+    puts items, @items
+    items.each do |item|
+      #puts "here", item[0], @items[item[0]]
+      if @items.key?(item[0])
+        puts @items[item[0]].name
+        m.addItem(@items[item[0]].clone)
+      end
     end
   end
 

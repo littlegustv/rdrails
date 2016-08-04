@@ -11,6 +11,7 @@ class Game
     @users = []
     @REDIS = redis
     initDB
+    loadItems
     loadRooms
     loadCharacters
     loadMobiles
@@ -61,6 +62,7 @@ class Game
     if !user(id)
       m_info = loadPlayerMobileData(id)
       u = Mobile.new(m_info[0], m_info[1], m_info[2], $game, id)
+      loadInventory(u)
       @users.push(u)
       @mobiles.push(u)
     else

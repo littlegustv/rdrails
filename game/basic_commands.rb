@@ -1,6 +1,6 @@
 module BasicCommands
   def self.extended(mod)
-    mod.commands = ["look", "north", "south", "east", "west", "up", "down", "who", "quit", "score", "say", "kill", "flee", "rest", "wake", "quicken", "affects"]
+    mod.commands = ["look", "north", "south", "east", "west", "up", "down", "who", "quit", "score", "say", "kill", "flee", "rest", "wake", "quicken", "affects", "inventory"]
   end
 
   def look(args = "")
@@ -9,6 +9,10 @@ module BasicCommands
   end
 
   def say(args)
+    if args.count <= 0
+      emit "Say what?"
+      return 0
+    end
     string = "'#{args.join(' ')}'"
     @game.emit do |u|
       if u.id == @id
@@ -88,6 +92,11 @@ module BasicCommands
 
   def score(args)
     @game.emit { |user| "<h3>#{character.name}</h3>" + character.stats.map { |k, v| "<b>#{k}</b> - #{v} [#{stat(k)}]"}.join("<br>") if is user }
+    return 0
+  end
+
+  def inventory(args)
+    emit "<h3>Inventory</h3>" + @inventory.map { |item| "#{item.name}"}.join("<br>") + "<br><br>"
     return 0
   end
 
