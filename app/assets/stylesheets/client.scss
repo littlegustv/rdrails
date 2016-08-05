@@ -26,10 +26,17 @@ body {
 }
 .room {
   margin-left: -10px;
-  padding: 10px;
-  background-color: rgba(255,255,255,0.1);
-  border-top-right-radius: 20px;
-  border-bottom-left-radius: 20px;
+  *padding: 10px;
+  *background-color: rgba(255,255,255,0.1);
+  *border-top-right-radius: 20px;
+  *border-bottom-left-radius: 20px;
+  margin-bottom: 15px;
+  border-width: 56px;
+  border-style: solid;
+  -webkit-border-image: url('http://orig09.deviantart.net/1f8b/f/2010/332/0/f/sony_vegas_border_3_by_vyawie-d33s0k3.png') 25% stretch;
+  background-color: rgba(255,240,180,0.5);
+  color: black;
+  box-sizing: border-box;
 }
 .say {
   color: gold;

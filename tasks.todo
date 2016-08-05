@@ -22,12 +22,19 @@ character:
   ✔ behavior object @done (16-08-04 12:45)
   ✔ affects/behaviors are the SAME object (affects are duration-based behaviors?) @done (16-08-04 14:36)
   ✔ load items, have stats inherit/combine all that together @done (16-08-04 15:34)
+  ✔ handle death @done (16-08-05 10:02)
+    ✔ looting items @done (16-08-05 11:55)
+  ✔ handle repop @done (16-08-05 10:38)
   ☐ add equipment slots
   ☐ add class to character, load skills modules as appropriate
-  ☐ handle death
   ☐ reboot/reload button on rails site (sidekiq?)
+    ☐ admin panel, require 'start.rb', trigger start script on button press?
   ☐ figure out heroku hosting -> free heroku redis? postgresql!?
   ☐ handle SAVING of players
+  ☐ make the login work like really
+
+  ☐ bugs
+    ✔ npcs don't execute combat @fixed @done (16-08-05 09:30)
 
   ✔ rails 5.0 @done (16-08-02 12:46)
     ✔ need independant game objects @done (16-08-02 12:42)
@@ -62,3 +69,28 @@ Level 12: second attack        1%      sneak               39%
 Level 18: enhanced damage    n/a      
 Level 23: living stone       n/a      
 Level 30: craft item         n/a
+
+
+damageDecorators = [
+  ['miss', 'misses', 'clumsy', ''],
+  ['bruise', 'bruises', 'clumsy', ''],
+  ['scrape', 'scrapes', 'wobbly', ''],
+  ['scratch', 'scratches', 'wobbly', ''],
+  ['lightly wound', 'lightly wounds', 'amateur', ''],
+  ['injure', 'injures', 'amateur', ''],
+  ['harm', 'harms', 'competent', ', creating a bruise'],
+  ['thrash', 'thrashes', 'competent', ', leaving marks'],
+  ['decimate', 'decimates', 'cunning', ', the wound bleeds'],
+  ['devastate', 'devastates', 'cunning', ', hitting organs'],
+  ['mutilate', 'mutilates', 'calculated', ', shredding flesh'],
+  ['cripple', 'cripples', 'calculated', ', leaving GAPING holes'],
+  ['DISEMBOWEL', 'DISEMBOWELS', 'calm', ', guts spill out'],
+  ['DISMEMBER', 'DISMEMBERS', 'calm', ', blood sprays forth'],
+  ['ANNIHILATE!', 'ANNIHILATES!', 'furious', ', revealing bones'],
+  ['OBLITERATE!', 'OBLITERATES!', 'furious', 'furious', ', rending organs'],
+  ['DESTROY!!', 'DESTROYS!!', 'frenzied', 'frenzied', ', shattering bones'],
+  ['MASSACRE!!', 'MASSACRES!!', 'barbaric', 'barbaric', ', gore splatters everywhere'],
+  ['!DECAPITATE!', '!DECAPITATES!', 'deadly', 'deadly', ', scrambling some brains'],
+  ['@r!!SHATTER!!@x', '@r!!SHATTERS!!@x', 'legendary', 'legendary', ' into tiny pieces'],
+  ['do @rUNSPEAKABLE@x things to', 'does @rUNSPEAKABLE@x things to', 'ultimate', '!'],
+]

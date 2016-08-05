@@ -1,6 +1,6 @@
 module BasicCommands
   def self.extended(mod)
-    mod.commands = ["look", "north", "south", "east", "west", "up", "down", "who", "quit", "score", "say", "kill", "flee", "rest", "wake", "quicken", "affects", "inventory"]
+    mod.commands = ["look", "north", "south", "east", "west", "up", "down", "who", "quit", "score", "say", "kill", "flee", "rest", "wake", "quicken", "affects", "inventory", "fireball"]
   end
 
   def look(args = "")
@@ -49,6 +49,10 @@ module BasicCommands
   end
 
   def move(cmd)
+    if @combat
+      emit "You are too busy to do that!"
+      return 0
+    end
     if hasBehavior("Rest")
       emit "Try standing up first."
       return 0
@@ -101,24 +105,15 @@ module BasicCommands
   end
 
   def kill(args)
-    if hasBehavior("Rest")
-      emit "You can't attack anyone while you are resting!"
-      return 0
-    elsif @combat
-      @game.emit { |user| "You are already in combat!" if is user }
-      return 0
-    elsif args.count <= 0
+    if args.count <= 0
       @game.emit { |user| "Kill whom?" if is user }
       return 0
     else
-      targets = @game.mobiles.select { |mobile| !is(mobile) && mobile.room_id == @room_id && mobile.render(self).downcase.match(/\A#{args[0]}/)}
-      if targets.count <= 0
-        @game.emit { |user| "You can't find them." if is user }
+      target = @game.mobiles.select { |mobile| !is(mobile) && mobile.room_id == @room_id && mobile.render(self).downcase.match(/\A#{args[0]}/)}.first
+      if !target
+        emit "You can't find them."
         return 0
-      else
-        target = targets.first
-        @combat = target
-        target.combat = self
+      elsif start_combat(target)
         @game.emit do |user| 
           if is user
             "You attack #{target.render(self)}!"
@@ -127,6 +122,8 @@ module BasicCommands
           end
         end
         return 1
+      else
+        return 0
       end
     end
   end
@@ -143,8 +140,7 @@ module BasicCommands
           "#{render(@combat)} has fled!"
         end
       end
-      @combat.combat = nil
-      @combat = nil
+      end_combat
       # move!
       return 1
     else
@@ -186,6 +182,24 @@ module BasicCommands
   def affects(args)
     emit @behaviors.select { |k, b| !b.duration.nil? }.map { |k, b| "#{k}: ... #{b.duration.to_i} >>> #{b.description}" }.join("<br>")
     return 0
+  end
+
+  def fireball(args)
+    if args.count <= 0
+      emit "You have to target someone!"
+      return 0
+    end
+    target = @game.mobiles.select { |mobile| mobile.room_id == @room_id && mobile.render(self).downcase.match(/\A#{args[0]}/)}.first
+    if !target
+      emit "You don't see them here."
+      return 0
+    elsif start_combat(target)
+      emit "You launch a fireball at #{target.render(self)}"
+      target.addBehavior(Fireball)
+      return 1
+    else
+      return 0    
+    end
   end
 
 end

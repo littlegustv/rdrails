@@ -52,7 +52,7 @@ class Rest < Behavior
   end
 
   def onUpdate(dt)
-    @mobile.character.stats["hitpoints"] += 2 * dt
+    @mobile.stats["hitpoints"] += 2 * dt
   end
 
   def onEnd
@@ -68,7 +68,7 @@ class Quicken < Behavior
   end
 
   def onUpdate(dt)
-    @mobile.character.stats["hitpoints"] -= 1 * dt
+    @mobile.stats["hitpoints"] -= 1 * dt
   end
 
   def onCombat
@@ -81,4 +81,32 @@ class Quicken < Behavior
     @mobile.emit "Not so fast!"
   end
 
+end
+
+class Nervous < Behavior
+  def onStart
+    @duration = 20
+  end
+
+  def onEnd
+    @mobile.emit "You can now fight again."
+  end
+end
+
+class Fireball < Behavior
+  def onStart
+    @duration = 5
+    @mobile.emit "You are hit by a fireball!"
+    @mobile.do_damage(20)
+  end
+
+  def onCombat
+    @mobile.emit "It burns!"
+    $game.emit do |user|
+      if user.room_id == @mobile.room_id && !user.is(@mobile)
+        "#{@mobile.render(user)} is burned by the flames." 
+      end
+    end
+    @mobile.do_damage(4)
+  end
 end

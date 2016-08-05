@@ -3,12 +3,14 @@ require './db.rb'
 class Game
   
   attr_reader :rooms, :characters, :mobiles, :users
+  attr_writer :mobiles
 
   include SQLITE
 
   def initialize(redis)
     @clock = {analog: 0, digital: 0}
     @users = []
+    @mobiles = []
     @REDIS = redis
     initDB
     loadItems
@@ -35,24 +37,39 @@ class Game
       if @clock[:digital] % 1 == 0
         do_round        
       end
+
+      if @clock[:digital] % 10 == 0
+        do_repop
+      end
     end
 
-    @users.each do |user|
-      user.update(dt)
+    @mobiles.each do |mobile|
+      mobile.update(dt)
     end
 
+  end
+
+  def removeMobile(mobile)
+    @mobiles.delete(mobile)
+  end
+
+  def do_repop
+    emit do |user|
+      "Repop"
+    end
+    loadMobiles
   end
 
   def do_round
     @users.each do |user|
       user.combat_buffer = ""
     end
-    @users.each do |user|
-      user.do_round()
+    @mobiles.each do |mobile|
+      mobile.do_round()
     end
     emit do |user|
       if user.combat_buffer.length > 0
-        user.combat_buffer
+        user.combat_buffer + "#{user.combat.render_condition(self)}<br>"
       end
     end
   end

@@ -35,11 +35,12 @@ module SQLITE
 
   def loadMobiles
     rows = @db.execute "select id, room_id, character_id from mobiles where user_id is null"
-    @mobiles = []
     rows.each do |row|
       m = Mobile.new(row[0], row[1], row[2], self)
-      @mobiles.push(m)
-      loadInventory(m)
+      if @mobiles.select { |m| m.id == row[0] }.count <= 0
+        @mobiles.push(m)
+        loadInventory(m)
+      end
     end
   end
 

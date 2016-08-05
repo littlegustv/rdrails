@@ -1,7 +1,7 @@
 class Mobile
   attr_reader :id, :room_id, :commands, :user_id, :start, :combat, :combat_buffer, :character_id
   attr_writer :commands, :combat, :combat_buffer
-  attr_accessor :behaviors, :affects, :inventory
+  attr_accessor :behaviors, :affects, :inventory, :stats
 
   def initialize(id, room_id, character_id, game, user_id = nil)
     @id = id
@@ -16,11 +16,12 @@ class Mobile
     @combat_buffer = ""
     @behaviors = {}
     @inventory = []
+    @stats = character.stats.clone
     extend BasicCommands
   end
 
   def prompt
-    "<p>[PROMPT] #{character.stats['hitpoints']}hp</p>"
+    "<p class='prompt'>#{stat('hitpoints').to_i}/#{base('hitpoints')} hp #{stat('manapoints').to_i}/#{base('hitpoints')} mp</p>"
   end
 
   def addItem(item)
@@ -63,7 +64,67 @@ class Mobile
       handle(c['message'])
     end
     @behaviors.each{ |k, b| b.update(dt) }
+
+    if stat("hitpoints") <= 0
+      die
+    end 
     # that's the command part, below we have the combat, which behaves by the same rules for everyone
+  end
+
+  def die
+    if @combat
+      buffer = ""
+      if user_id
+        @game.emit do |user|
+          "#{character.name} suffers defeat at the hands of #{@combat.character.name}!!"
+        end
+      else
+        #looting from npcs only, at the moment
+        @inventory.each do |item|
+          #item.render
+          buffer += "You get #{item.name} from the corpse of #{render(@combat)}.<br>"
+          @combat.addItem item
+        end
+      end
+
+      buffer += "#{character.name} is DEAD!!<br>"
+      @combat.emit buffer
+      end_combat
+    end
+    if @user_id
+      @stats = character.stats.clone
+      @behaviors = {}
+      emit "You have been KILLED!"
+      addBehavior(Nervous)
+      addBehavior(Rest)
+    else
+      @game.removeMobile(self)
+    end
+  end
+
+  def start_combat(mobile)
+    if is mobile
+      emit "Suicide is a mortal sin."
+      return false
+    elsif hasBehavior("Rest")
+      emit "Try standing up first."
+      return false
+    elsif hasBehavior("Nervous")
+      emit "You are too nervous to start anything like that."
+      return false
+    elsif @combat
+      emit "You are already fighting someone!"
+      return false
+    else
+      @combat = mobile
+      mobile.combat = self
+      return true
+    end
+  end
+
+  def end_combat
+    @combat.combat = nil
+    @combat = nil
   end
 
   def do_round
@@ -86,8 +147,29 @@ class Mobile
     @game.emit { |user| msg if is user }
   end
 
+  def render_condition(from)
+    percentage = 100 * stat("hitpoints") / character.stats["hitpoints"]
+
+    if percentage == 100
+      condition = "#{render(from)} is in excellent condition."
+    elsif percentage >= 80
+      condition =  "#{render(from)} has some small wounds and bruises."
+    elsif percentage >= 60
+      condition =  "#{render(from)} has quite a few wounds."
+    elsif percentage >= 40
+      condition =  "#{render(from)} has some big nasty wounds and scratches."
+    elsif percentage >= 20
+      condition =  "#{render(from)} is pretty hurt."
+    elsif percentage > 0
+      condition =  "#{render(from)} is in awful condition."
+    else
+      condition =  "BUG: #{render(from)} is mortally wounded and should be dead."
+    end
+    condition
+  end
+
   def do_hit
-    damage = rand(character.stats["damage"]) + character.stats["damage"]
+    damage = rand(@stats["damage"]) + @stats["damage"]
     @combat.do_damage(damage)
     @combat.combat_buffer += "#{render(@combat)}'s wobbly #{noun} bruises you, dealing #{damage} damage.<br>"
     @combat_buffer += "Your wobbly #{noun} bruises #{@combat.render(self)}, dealing #{damage} damage.<br>"
@@ -98,7 +180,7 @@ class Mobile
   end
 
   def do_damage(n)
-    character.stats["hitpoints"] -= n
+    @stats["hitpoints"] -= n
   end
 
   def command(cmd)
@@ -106,13 +188,21 @@ class Mobile
   end
 
   def is(user)
-    @user_id == user.user_id
+    if @user_id
+      @user_id == user.user_id
+    else
+      @id == user.id
+    end
   end
 
   def stat(key)
-    if character.stats[key]
-      character.stats[key] + @behaviors.map{ |k, b| b.stat(key) }.reduce(:+).to_i + @inventory.map { |i| i.stat(key) }.reduce(:+).to_i # fix me: should use equipment, currently using inventory
+    if @stats[key]
+      @stats[key] + @behaviors.map{ |k, b| b.stat(key) }.reduce(:+).to_i + @inventory.map { |i| i.stat(key) }.reduce(:+).to_i # fix me: should use equipment, currently using inventory
     end
+  end
+
+  def base(key)
+    character.stats[key]
   end
 
   def room
