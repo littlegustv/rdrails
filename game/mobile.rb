@@ -18,6 +18,7 @@ class Mobile
     @inventory = []
     @stats = character.stats.clone
     extend BasicCommands
+    extend ThiefCommands
   end
 
   def prompt
@@ -106,6 +107,9 @@ class Mobile
     if is mobile
       emit "Suicide is a mortal sin."
       return false
+    elsif mobile.hasBehavior("Nervous")
+      emit "Give them a chance to breath."
+      return false
     elsif hasBehavior("Rest")
       emit "Try standing up first."
       return false
@@ -118,6 +122,7 @@ class Mobile
     else
       @combat = mobile
       mobile.combat = self
+      removeBehavior("Hide")
       return true
     end
   end
@@ -129,11 +134,11 @@ class Mobile
 
   def do_round
     if @combat
-      do_hit
+      do_hit(noun)
       10.times do |i|
         n = rand(10) + i * 10
         if n < stat("attackspeed")
-          do_hit
+          do_hit(noun)
         end
       end
 
@@ -147,8 +152,12 @@ class Mobile
     @game.emit { |user| msg if is user }
   end
 
+  def get_percentage
+    100 * stat("hitpoints") / character.stats["hitpoints"]
+  end
+
   def render_condition(from)
-    percentage = 100 * stat("hitpoints") / character.stats["hitpoints"]
+    percentage = get_percentage
 
     if percentage == 100
       condition = "#{render(from)} is in excellent condition."
@@ -168,11 +177,16 @@ class Mobile
     condition
   end
 
-  def do_hit
+  def do_hit(noun, buffered=true)
     damage = rand(@stats["damage"]) + @stats["damage"]
     @combat.do_damage(damage)
-    @combat.combat_buffer += "#{render(@combat)}'s wobbly #{noun} bruises you, dealing #{damage} damage.<br>"
-    @combat_buffer += "Your wobbly #{noun} bruises #{@combat.render(self)}, dealing #{damage} damage.<br>"
+    if buffered
+      @combat.combat_buffer += "#{render(@combat)}'s wobbly #{noun} bruises you, dealing #{damage} damage.<br>"
+      @combat_buffer += "Your wobbly #{noun} bruises #{@combat.render(self)}, dealing #{damage} damage.<br>"
+    else
+      @combat.emit "#{render(@combat)}'s wobbly #{noun} bruises you, dealing #{damage} damage.<br>"
+      emit "Your wobbly #{noun} bruises #{@combat.render(self)}, dealing #{damage} damage.<br>"
+    end
   end
 
   def noun
@@ -213,8 +227,42 @@ class Mobile
     @game.characters[@character_id]
   end
 
+  def target_mobile(args)
+    targets = @game.mobiles.select do |mobile| 
+      mobile.room_id == @room_id && mobile.render(self).downcase.match(/\A#{args[0]}/) && can_target(mobile)
+    end
+    target = targets.first
+  end
+
+  def can_target(mobile)
+    # if blind, cannot target at all
+    if hasBehavior(["Blind", "Dirtkick", "Smokebomb"])
+      return false
+    elsif mobile.hasBehavior(["Hide"])
+      return false
+    elsif mobile.hasBehavior(["Invisible"]) && !hasBehavior(["DetectInvisible"])
+      return false
+    end
+    return true
+  end
+
+  def target_exit(args)
+    exit = room.exits.select { |direction, room_id| direction.downcase.match(/\A#{args[0]}/)}.first
+    if exit
+      puts exit
+      return [exit[0], @game.rooms[exit[1]]]
+    else
+      return false
+    end
+  end
+
   # the render function gives output to be sent to a player.  this is where we can handle things that affect rendering, like blind
   def render(from, format = :short)
+    # if hidden, shouldn't even try to hide?
+    if hasBehavior("Hide") || from.hasBehavior(["Blind", "Dirtkick", "Smokebomb"])
+      return "Someone"
+    end
+
     case format
     when :short
       character.name
@@ -240,7 +288,7 @@ class Mobile
     if cmd.count <= 0
       @game.emit { |user| "Huh?" if is user }
     elsif (cmd = cmd.first)
-      @lag = send(cmd, args)
+      @lag = send("cmd_#{cmd}", args)
     else
       @game.emit { |user| "Huh?" if is user }
     end

@@ -1,14 +1,14 @@
 module BasicCommands
   def self.extended(mod)
-    mod.commands = ["look", "north", "south", "east", "west", "up", "down", "who", "quit", "score", "say", "kill", "flee", "rest", "wake", "quicken", "affects", "inventory", "fireball"]
+    mod.commands.push *["look", "north", "south", "east", "west", "up", "down", "who", "quit", "score", "say", "kill", "flee", "rest", "wake", "quicken", "affects", "inventory", "fireball"]
   end
 
-  def look(args = "")
+  def cmd_look(args = "")
     @game.emit { |user| room.render(self, :long) if is user } 
     return 0
   end
 
-  def say(args)
+  def cmd_say(args)
     if args.count <= 0
       emit "Say what?"
       return 0
@@ -24,27 +24,27 @@ module BasicCommands
     return 0
   end
 
-  def north(args)
+  def cmd_north(args)
     move(:north)
   end
 
-  def south(args)
+  def cmd_south(args)
     move(:south)
   end
 
-  def east(args)
+  def cmd_east(args)
     move(:east)
   end
 
-  def west(args)
+  def cmd_west(args)
     move(:west)
   end
 
-  def up(args)
+  def cmd_up(args)
     move(:up)
   end
 
-  def down(args)
+  def cmd_down(args)
     move(:down)
   end
 
@@ -71,18 +71,19 @@ module BasicCommands
         "#{render(user)} has arrived."
       end
     end
+    removeBehavior("Hide")
     @room_id = room.exits[direction]
-    look
+    cmd_look
     puts @command_queue
     return 0.5
   end
 
-  def who(args)
+  def cmd_who(args)
     @game.emit { |user| @game.render(self) if is user }
     return 0
   end
 
-  def quit(args)
+  def cmd_quit(args)
     @game.emit do |user| 
       if is user
         "You have quit the game."
@@ -94,22 +95,22 @@ module BasicCommands
     return 0
   end
 
-  def score(args)
+  def cmd_score(args)
     @game.emit { |user| "<h3>#{character.name}</h3>" + character.stats.map { |k, v| "<b>#{k}</b> - #{v} [#{stat(k)}]"}.join("<br>") if is user }
     return 0
   end
 
-  def inventory(args)
+  def cmd_inventory(args)
     emit "<h3>Inventory</h3>" + @inventory.map { |item| "#{item.name}"}.join("<br>") + "<br><br>"
     return 0
   end
 
-  def kill(args)
+  def cmd_kill(args)
     if args.count <= 0
       @game.emit { |user| "Kill whom?" if is user }
       return 0
     else
-      target = @game.mobiles.select { |mobile| !is(mobile) && mobile.room_id == @room_id && mobile.render(self).downcase.match(/\A#{args[0]}/)}.first
+      target = target_mobile(args)
       if !target
         emit "You can't find them."
         return 0
@@ -128,7 +129,7 @@ module BasicCommands
     end
   end
 
-  def flee(args)
+  def cmd_flee(args)
     if !@combat
       @game.emit { |user| "You aren't fighting anyone." if is user }
       return 0
@@ -149,7 +150,7 @@ module BasicCommands
     end
   end
 
-  def rest(args)
+  def cmd_rest(args)
     if @combat
       emit "You can't rest while fighting."
     elsif hasBehavior("Rest")
@@ -160,7 +161,7 @@ module BasicCommands
     return 0
   end
 
-  def wake(args)
+  def cmd_wake(args)
     if !hasBehavior("Rest")
       emit "You aren't resting"
     else
@@ -169,7 +170,7 @@ module BasicCommands
     return 0
   end
 
-  def quicken(args)
+  def cmd_quicken(args)
     if hasBehavior("Rest")
       emit "Try waking up first!"
       return 0
@@ -179,17 +180,17 @@ module BasicCommands
     end
   end
 
-  def affects(args)
+  def cmd_affects(args)
     emit @behaviors.select { |k, b| !b.duration.nil? }.map { |k, b| "#{k}: ... #{b.duration.to_i} >>> #{b.description}" }.join("<br>")
     return 0
   end
 
-  def fireball(args)
+  def cmd_fireball(args)
     if args.count <= 0
       emit "You have to target someone!"
       return 0
     end
-    target = @game.mobiles.select { |mobile| mobile.room_id == @room_id && mobile.render(self).downcase.match(/\A#{args[0]}/)}.first
+    target = target_mobile(args)
     if !target
       emit "You don't see them here."
       return 0

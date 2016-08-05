@@ -25,13 +25,20 @@ character:
   ✔ handle death @done (16-08-05 10:02)
     ✔ looting items @done (16-08-05 11:55)
   ✔ handle repop @done (16-08-05 10:38)
+  ☐ add complete skill set for single class -> 1st (thief, see below)
+
+  ☐ add skill percentages, levelling?
+    ☐ check skill percentage (can be fixed for now)
+    ☐ add skill percentage records, saved in db as well
   ☐ add equipment slots
   ☐ add class to character, load skills modules as appropriate
   ☐ reboot/reload button on rails site (sidekiq?)
     ☐ admin panel, require 'start.rb', trigger start script on button press?
   ☐ figure out heroku hosting -> free heroku redis? postgresql!?
   ☐ handle SAVING of players
+
   ☐ make the login work like really
+  ☐ port forwarding on local machine to make game visible!
 
   ☐ bugs
     ✔ npcs don't execute combat @fixed @done (16-08-05 09:30)
@@ -51,25 +58,127 @@ character:
       ✘ display "User.active.name cgossips 'Message'" to all users (ignoring rooms for now) @cancelled (16-07-29 10:58)
 
 
+general additions needed for following:
+  ☐ using skills in combat
+  ☐ skill percentage chance to succeed/fail
+  ☐ target items
+  ☐ equip weapon
+  ✔ handle vision affects/display/targeting @done (16-08-05 16:34)
+    ✔ blind -> render, target @done (16-08-05 16:34)
+    ✔ invis/hidden -> render, target @done (16-08-05 16:34)
+
+  ☐ acquire gold, buy+sell
+
 thief skills:
 
-Level  1: backstab            76%      dagger              75%      
-          haggle              75%      peek                12%      
-          polearm             85%      recall              61%      
-          scrolls             12%      staves              12%      
-          wands               12%      whip                12%      
-Level  3: dirt kicking        75%      
-Level  5: hide                75%      steal               75%      
-          trip                75%      
-Level  6: dodge               75%      lore                 7%      
-Level  7: pick lock            6%      shadow               6%      
-Level  8: envenom              5%      
-Level 11: disarm              75%      
-Level 12: second attack        1%      sneak               39%      
-Level 18: enhanced damage    n/a      
-Level 23: living stone       n/a      
-Level 30: craft item         n/a
+ ☐ backstab           100%
+   ✔ basic skill @done (16-08-05 15:59)
+   ☐ ability to use in combat (no args) @general
+ ☐ butcher             85%
+   ☐ ability to target items @general
+   ☐ body part drop from corpse
+ ☐ dagger             100%
+   ☐ round-combat based on skill @general
+   ☐ equippable weapons (first eq slot)
+ ☐ haggle              93%
+   ☐ shops, gold drop, buy/sell command
+ ✔ peek               100% @done (16-08-05 16:00)
+ ☐ recall              88%
+   ☐ movement points, recall center
+ ✘ scrolls             85%       @cancelled (16-08-05 16:01)
+ ☐ shield block       100%      
+ ✘ staves              85%       @cancelled (16-08-05 16:01)
+ ☐ taste               85%      
+   ☐ eating/drinking
+   ☐ poison behavior/affect
+ ☐ throw               85%
+ ✘ wands               85%       @cancelled (16-08-05 16:01)
+ ☐ whip                85%      
+ ✔ dirt kicking        95%       @done (16-08-05 16:31)
+   ✔ blind @general @done (16-08-05 16:31)
+   ✔ vision checks @general @done (16-08-05 16:31)
+ ✔ hide               100% @done (16-08-05 16:31)
+   ✔ vision checks @general @done (16-08-05 16:31)
+ ☐ steal              100%
+ ☐ trip               100%
+   ☐ 'stun' chance
+ ☐ dodge              100%      
+ ☐ lore                95%      
+   ☐ ability to target items
+ ☐ pick lock           84%      
+   ☐ exit Objects with closed/open, locked/unlocked and key
+ ☐ shadow              82%      
+   ☐ 'follow' behavior
+ ☐ envenom             81%      
+   ☐ 'poison' behavior
+   ☐ item behaviors @general
+ ☐ hunt               100%
+   ☐ recursive tree-search algorithm
+ ☐ blindside          100%      
+ ☐ disarm              80%      
+   ☐ equippable weapon @general
+ ☐ second attack      100%
+   ☐ onCombat ability (do_hit) @easy!
+ ☐ sneak              100%      
+ ✔ rub                 85%       @done (16-08-05 16:32)
+   ✔ dirtkick behavior @done (16-08-05 16:32)
+ ☐ substitution        76%      
+ ✘ fast healing        86%       @cancelled (16-08-05 16:05)
+ ✘ enhanced damage    100% @cancelled (16-08-05 16:05)
+ ☐ smokebomb           90%
+   ☐ blind
+   ☐ vision
+ ☐ snake bite          98%     
+   ☐ poison, do_combat behavior
+ ☐ bribe               86%      
+   ☐ money, hunt algorithm
+ ☐ parry              100%      
+ ☐ tumbling            96%      
+ ☐ spy                100%      
+   ☐ more channels (clan)
+ ☐ craft item          85%      
+   ☐ items that can be crafted?
+ ☐ ensnare             81% 
+   ☐ room affects/behaviors @general
 
+spells:
+
+ ☐ armor                5 mana  
+ ☐ infravision          5 mana
+   ☐ darkness?
+ ☐ confusion           15 mana  
+   ☐ 'where' command
+ ✘ protection evil      5 mana   @cancelled (16-08-05 16:07)
+ ✘ protection good      5 mana   @cancelled (16-08-05 16:07)
+ ✘ protection neutral   5 mana   @cancelled (16-08-05 16:07)
+ ☐ grandeur            25 mana  
+ ☐ minimation          25 mana  
+ ✘ soundproof          10 mana   @cancelled (16-08-05 16:07)
+ ☐ taunt               15 mana  
+ ✘ fireproof           10 mana   @cancelled (16-08-05 16:08)
+ ☐ giant strength      20 mana  
+   ☐ strength stat
+ ☐ oculary             25 mana  
+   ☐ vision/blind
+ ✘ granite stare        3 mana   @cancelled (16-08-05 16:08)
+ ☐ haste               30 mana  
+ ☐ refresh             12 mana  
+   ☐ movement points
+ ☐ sanctuary           75 mana  ????
+ ☐ mirror image        30 mana  
+ ☐ cancellation        20 mana  
+ ☐ charm person        20 mana  ????
+ ☐ scramble            30 mana  
+ ☐ shield              12 mana  
+ ☐ sleep               20 mana  
+ ☐ hypnosis            20 mana  
+   ☐ 'order' ?
+ ☐ stone skin          12 mana  
+
+
+ideas:
+  ☐ 'ask' npcs -> can ask about item locations, levelling recommendations, etc.  npcs will respond to charisma, being given gold, etc.
+  ☐ 'bribe' as a more robust mechanic -> can bribe an npc to waylay a player, or to find them, or to ... steal from them?
 
 damageDecorators = [
   ['miss', 'misses', 'clumsy', ''],

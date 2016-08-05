@@ -30,7 +30,6 @@ module SQLITE
 
       @rooms[id] = Room.new(id, row[1], row[2], room_exits, self)
     end
-    puts @roomss
   end
 
   def loadMobiles
@@ -46,11 +45,9 @@ module SQLITE
 
   def loadInventory(m)
     items = @db.execute "select item_id from inventory_items where character_id = ?", m.character_id
-    puts items, @items
     items.each do |item|
       #puts "here", item[0], @items[item[0]]
       if @items.key?(item[0])
-        puts @items[item[0]].name
         m.addItem(@items[item[0]].clone)
       end
     end

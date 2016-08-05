@@ -110,3 +110,30 @@ class Fireball < Behavior
     @mobile.do_damage(4)
   end
 end
+
+class Hide < Behavior
+  def onStart
+    @mobile.emit "You are now hidden."
+  end
+
+  def onEnd
+    @mobile.emit "You are no longer concealed."
+  end
+end
+
+class Dirtkick < Behavior
+  def onStart
+    @mobile.emit "#{@mobile.combat.render(@mobile)} kicks dirt in your eyes!"
+    @stats["damage"] = -5 #fix me: should be hitroll (when it exists)
+    $game.emit do |user|
+      if user.room_id == @mobile.room_id && !user.is(@mobile)
+        "#{@mobile.render(user)} is blinded by the dirt in their eyes!" 
+      end
+    end
+    @duration = 20
+  end
+
+  def onEnd
+    @mobile.emit "You rub the dirt out of your eyes."
+  end
+end

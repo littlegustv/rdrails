@@ -69,7 +69,7 @@ class Game
     end
     emit do |user|
       if user.combat_buffer.length > 0
-        user.combat_buffer + "#{user.combat.render_condition(self)}<br>"
+        user.combat_buffer + "#{user.combat.render_condition(user)}<br>"
       end
     end
   end
