@@ -73,6 +73,12 @@ class CharactersController < ApplicationController
   private
 
   def character_params
-    params.permit(:id, :name, :description,  :stat_attributes => [:hitpoints, :manapoints, :attackspeed, :damagereduction, :damage],  :inventory_items_attributes => [:id, :_destroy, :item_id, :character_id])
+    params.permit(:id,
+      :name, 
+      :description,  
+      :stat_attributes => [:hitpoints, :manapoints, :attackspeed, :damagereduction, :damage],  
+      :inventory_items_attributes => [:id, :_destroy, :item_id, :character_id],
+      :equipment_attributes => [:weapon_id, :head_id]
+      )
   end
 end

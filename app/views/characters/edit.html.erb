@@ -21,7 +21,7 @@
               </tbody>
             </table>
             <br>
-            <label for="" class="control-label">Items</label>
+            <label for="" class="control-label">Inventory</label>
             <div ng-repeat="inventory_item in character.inventory_items" class="input-group">
               <select name="" id="" ng-model="inventory_item.item_id" class="form-control" ng-options="item.id as item.name for item in items"></select>
               <span class="input-group-btn" ng-click="destroy(inventory_item);">
@@ -31,6 +31,12 @@
               </span>
             </div>
             <span class="btn btn-primary" ng-click="add(character.inventory_items);">Add Item</span>
+            <br>
+            <label for="" class="control-label">Equipment</label>
+            <div ng-repeat="(slot, item) in character.equipment track by $index" class="input-group">
+              <label for="" class="control-label">{{ slot }}</label>
+              <select name="" id="" ng-model="character.equipment[slot]" class="form-control" ng-options="item.id as item.name for item in items"></select>
+            </div>
     	</div>
       <div class="panel-footer">
           <div class="panel-footer"><span class="btn btn-default" ng-click="save();">Save</span></div>

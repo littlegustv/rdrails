@@ -1,7 +1,7 @@
 class Mobile
   attr_reader :id, :room_id, :commands, :user_id, :start, :combat, :combat_buffer, :character_id
   attr_writer :commands, :combat, :combat_buffer
-  attr_accessor :behaviors, :affects, :inventory, :stats
+  attr_accessor :behaviors, :affects, :inventory, :stats, :equipment
 
   def initialize(id, room_id, character_id, game, user_id = nil)
     @id = id
@@ -16,6 +16,7 @@ class Mobile
     @combat_buffer = ""
     @behaviors = {}
     @inventory = []
+    @equipment = {}
     @stats = character.stats.clone
     extend BasicCommands
     extend ThiefCommands
@@ -23,6 +24,25 @@ class Mobile
 
   def prompt
     "<p class='prompt'>#{stat('hitpoints').to_i}/#{base('hitpoints')} hp #{stat('manapoints').to_i}/#{base('hitpoints')} mp</p>"
+  end
+
+  def equip(slot, item)
+    puts "#{slot}, #{item}"
+    if item
+      puts "Equipping! #{item.name}"
+    end
+    if !@equipment[slot].nil?
+      unequip(slot)
+    end
+    @equipment[slot] = item
+  end
+
+  def unequip(slot)
+    if @equipment[slot]
+      item = @equipment[slot].clone
+      @equipment.delete(slot)
+      item
+    end
   end
 
   def addItem(item)
@@ -103,7 +123,7 @@ class Mobile
     end
   end
 
-  def start_combat(mobile)
+  def check_combat(mobile)
     if is mobile
       emit "Suicide is a mortal sin."
       return false
@@ -116,9 +136,18 @@ class Mobile
     elsif hasBehavior("Nervous")
       emit "You are too nervous to start anything like that."
       return false
+    elsif mobile && mobile == @combat
+      return true
     elsif @combat
       emit "You are already fighting someone!"
       return false
+    else
+      return true
+    end
+  end
+
+  def start_combat(mobile, check=true)
+    if !check_combat(mobile) && check
     else
       @combat = mobile
       mobile.combat = self
@@ -130,6 +159,11 @@ class Mobile
   def end_combat
     @combat.combat = nil
     @combat = nil
+  end
+
+  def skill(name)
+    # right now all skills have a 75% change of succeeding
+    yield rand(100) <= 75
   end
 
   def do_round
@@ -211,7 +245,7 @@ class Mobile
 
   def stat(key)
     if @stats[key]
-      @stats[key] + @behaviors.map{ |k, b| b.stat(key) }.reduce(:+).to_i + @inventory.map { |i| i.stat(key) }.reduce(:+).to_i # fix me: should use equipment, currently using inventory
+      @stats[key] + @behaviors.map{ |k, b| b.stat(key) }.reduce(:+).to_i + @equipment.map { |_, i| i ? i.stat(key) : 0 }.reduce(:+).to_i # fix me: should use equipment, currently using inventory
     end
   end
 
@@ -232,6 +266,10 @@ class Mobile
       mobile.room_id == @room_id && mobile.render(self).downcase.match(/\A#{args[0]}/) && can_target(mobile)
     end
     target = targets.first
+  end
+
+  def target_item(args, list)
+    list.select { |i| i && i.name.downcase.match(/\A#{args[0]}/) && can_target(i) }.first
   end
 
   def can_target(mobile)

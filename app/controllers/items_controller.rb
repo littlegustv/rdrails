@@ -19,6 +19,11 @@ class ItemsController < ApplicationController
     end
   end
 
+  def update
+    @item = Item.find(params[:id])
+    @item.update(item_params)
+  end
+
   def index
   	@items = Item.all
     respond_to do |format|
@@ -34,7 +39,7 @@ class ItemsController < ApplicationController
   private
 
   def item_params
-  	params.require(:item).permit(:name, :description, :stat_attributes => [:hitpoints, :manapoints, :attackspeed, :damagereduction])
+  	params.require(:item).permit(:name, :description, :slot, :stat_attributes => [:hitpoints, :manapoints, :attackspeed, :damagereduction])
   end
 
 end

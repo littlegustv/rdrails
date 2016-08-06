@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160804154008) do
+ActiveRecord::Schema.define(version: 20160806174034) do
 
   create_table "areas", force: :cascade do |t|
     t.string   "name"
@@ -21,10 +21,18 @@ ActiveRecord::Schema.define(version: 20160804154008) do
   create_table "characters", force: :cascade do |t|
     t.string   "name"
     t.text     "description"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-    t.integer  "created_by_id"
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.         "created_by_id", default: "1"
     t.integer  "stat_id"
+  end
+
+  create_table "equipment", force: :cascade do |t|
+    t.integer  "character_id"
+    t.integer  "weapon_id"
+    t.integer  "head_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "exits", force: :cascade do |t|
@@ -44,14 +52,23 @@ ActiveRecord::Schema.define(version: 20160804154008) do
     t.string   "name"
     t.string   "description"
     t.integer  "stat_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
+    t.string   "slot",        default: "head"
   end
 
   create_table "mobiles", force: :cascade do |t|
     t.integer "room_id",      null: false
     t.integer "character_id", null: false
     t.integer "user_id"
+  end
+
+  create_table "old_characters", force: :cascade do |t|
+    t.string   "name"
+    t.text     "description"
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+    t.         "created_by",  default: "1"
   end
 
   create_table "room_items", force: :cascade do |t|

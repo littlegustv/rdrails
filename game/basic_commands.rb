@@ -1,6 +1,6 @@
 module BasicCommands
   def self.extended(mod)
-    mod.commands.push *["look", "north", "south", "east", "west", "up", "down", "who", "quit", "score", "say", "kill", "flee", "rest", "wake", "quicken", "affects", "inventory", "fireball"]
+    mod.commands.push *["look", "north", "south", "east", "west", "up", "down", "who", "quit", "score", "say", "kill", "flee", "rest", "wake", "quicken", "affects", "inventory", "fireball", "equipment", "wear", "remove", "lore"]
   end
 
   def cmd_look(args = "")
@@ -105,6 +105,11 @@ module BasicCommands
     return 0
   end
 
+  def cmd_equipment(args)
+    emit "<h3>Equipment</h3>" + @equipment.map { |slot, item| "[#{slot}] #{item ? item.name : 'Empty'}"}.join("<br>") + "<br><br>"
+    return 0
+  end
+
   def cmd_kill(args)
     if args.count <= 0
       @game.emit { |user| "Kill whom?" if is user }
@@ -113,6 +118,9 @@ module BasicCommands
       target = target_mobile(args)
       if !target
         emit "You can't find them."
+        return 0
+      elsif target == @combat
+        emit "You are already fighting them."
         return 0
       elsif start_combat(target)
         @game.emit do |user| 
@@ -133,20 +141,23 @@ module BasicCommands
     if !@combat
       @game.emit { |user| "You aren't fighting anyone." if is user }
       return 0
-    elsif rand(100) < 60
-      @game.emit do |user| 
-        if is user 
-          "You flee from combat!" 
-        elsif @combat.is user
-          "#{render(@combat)} has fled!"
+    else
+      skill("Flee") do |success|
+        if success
+          @game.emit do |user| 
+            if is user 
+              "You flee from combat!" 
+            elsif @combat.is user
+              "#{render(@combat)} has fled!"
+            end
+          end
+          end_combat
+        else
+          emit "Panic! You could not escape!"
         end
       end
-      end_combat
       # move!
       return 1
-    else
-      emit "Panic! You could not escape!"
-      return 0
     end
   end
 
@@ -201,6 +212,50 @@ module BasicCommands
     else
       return 0    
     end
+  end
+
+  def cmd_wear(args)
+    if args.count <= 0
+      emit "Wear what?"
+    else
+      if (target = target_item(args, @inventory))
+        equip(target.slot, target)
+        @inventory.delete(target)
+        emit "You wear #{target.name} on your #{target.slot}."
+        @game.emit { |user| "#{render(user)} wears #{target.render(user)}" if(user.room_id == @room_id && !is(user)) }
+      else
+        emit "You are not carrying that."
+      end
+    end
+    return 0
+  end
+
+  def cmd_remove(args)
+    if args.count <= 0
+      emit "Remove what?"
+    else
+      if (target = target_item(args, @equipment.values))
+        addItem(unequip(target.slot))
+        emit "You stop wearing #{target.name}."
+        @game.emit { |user| "#{render(user)} stops using #{target.render(user)}" if(user.room_id == @room_id && !is(user)) }
+      else
+        emit "You are not wearing that."
+      end
+    end
+    return 0
+  end
+
+  def cmd_lore(args)
+    if args.count <= 0
+      emit "Lore what?"
+    else
+      if (target = target_item(args, @equipment.values + @inventory))
+        emit target.render(self, :long)
+      else
+        emit "You don't have that."
+      end
+    end
+    return 0
   end
 
 end

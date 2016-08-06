@@ -1,4 +1,5 @@
-SQLITEPATH = "/home/hellerb/Projects/rdrails/db/development.sqlite3"
+SQLITEPATH = ENV["PWD"].gsub("game", "db") + "/development.sqlite3"
+puts SQLITEPATH
 
 module SQLITE
 
@@ -39,6 +40,7 @@ module SQLITE
       if @mobiles.select { |m| m.id == row[0] }.count <= 0
         @mobiles.push(m)
         loadInventory(m)
+        loadEquipment(m)
       end
     end
   end
@@ -53,6 +55,17 @@ module SQLITE
     end
   end
 
+  def loadEquipment(m)
+    equipment = @db.execute "select weapon_id, head_id from equipment where character_id = ?", m.character_id
+    if equipment && equipment.count > 0
+      equipment = equipment[0]
+    else
+      return
+    end
+    m.equip("weapon", @items[equipment[0]])
+    m.equip("head", @items[equipment[1]])
+  end
+
   def loadCharacters
     @characters = {}
     rows = @db.execute "select id, name, description, stat_id from characters"
@@ -65,11 +78,11 @@ module SQLITE
 
   def loadItems
     @items = {}
-    rows = @db.execute "select id, name, description, stat_id from items"
+    rows = @db.execute "select id, name, description, stat_id, slot from items"
     rows.each do |row|
       stat = @db.execute "select attackspeed, damagereduction, hitpoints, manapoints, damage from stats where id = ?", row[3]
       stat = Hash[['attackspeed', 'damagereduction', 'hitpoints', 'manapoints', 'damage'].zip(stat[0])]
-      @items[row[0]] = Item.new(row[1], row[2], stat)
+      @items[row[0]] = Item.new(row[1], row[2], stat, row[4])
     end
   end
 

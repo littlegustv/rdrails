@@ -40,9 +40,11 @@ rdApp.controller('editCharacter', function ($scope, Character, Item) {
 
   $scope.save = function () {
     $scope.character.stat_attributes = $scope.character.stat;
+    $scope.character.equipment_attributes = $scope.character.equipment;
     $scope.character.inventory_items_attributes = $scope.character.inventory_items.filter( function (m) { return m.item_id });
     delete $scope.character['stat'];
     delete $scope.character['inventory_items'];
+    delete $scope.character['equipment'];
     var redirect = $scope.character.id === undefined;
     $scope.character = Character.save($scope.character, function (character) {
       if (redirect) window.location = '/characters/' + $scope.character.id;
@@ -57,6 +59,7 @@ rdApp.controller('editCharacter', function ($scope, Character, Item) {
     if ($scope.character) array.push({});
   }
   $scope.items = Item.query();
+  debugScope = $scope;
 });
 
 rdApp.controller('editRoom', function ($scope, $location, Room, Character, Item, Area) {

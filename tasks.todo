@@ -38,8 +38,15 @@ character:
   ☐ handle SAVING of players
 
   ☐ make the login work like really
-  ☐ port forwarding on local machine to make game visible!
+    ☐ current process:
+      ☐ 1. create a character
+      ☐ 2. select that character (sets active to that character, creates mobile?) @check
+      ☐ 3. but! the game doesn't find the character, since there is no mobile associated with it (as loaded when the game started)
+      ☐ 4. so need to restart the game, then open client again
+      ☐ 5. active player character works - I think...
+ 
 
+  ☐ port forwarding on local machine to make game visible!
   ☐ bugs
     ✔ npcs don't execute combat @fixed @done (16-08-05 09:30)
 
@@ -59,21 +66,52 @@ character:
 
 
 general additions needed for following:
-  ☐ using skills in combat
-  ☐ skill percentage chance to succeed/fail
+  ✔ using skills in combat @done (16-08-06 12:16)
+  ✔ skill percentage chance to succeed/fail @done (16-08-06 14:09)
+
+NEXT:::
+  ☐ character creation/login
+    ☐ 1. login/signup -workflow
+        ☐ a. login/signup
+        ☐ b. character list
+          ☐ i. if active, display banner of some kind + "QUIT" button -> sets active to nil
+          ☐ ii. else, have list of possible characters with 'select/play' buttons
+        ☐ c. client
+          ☐ i. welcome message (dispact onload event from JS, instead of (or in addition to) rails channel, maybe?)
+            ☐ 1. reconnect/login depending on which one it is... (in game, if player exists in users)
+          ☐ ii. can type your commands
+        ☐ d. character creator (includes npcs?)
+          ☐ select class, loads (via angular) available skills
+          ☐ skill object: has name, creation points, required level (cosmetic at the moment)
+          ☐ creating join table entries in character_skill (has percentage, also cosmetic atm)
+          ☐ validates (twice, in angular and rails) total creation points, make sure it is not OVER
+          ☐ creates a new character!
+        ☐ handle command
+          ☐ first checks if command is in skills table
+        ☐ skill
+          ☐ checks percentage in skill table
+        ☐ per-character db-load
+          ☐ select percentage, skill_id from character skills where character_id = X
+        ☐ game db-load
+          ☐ skills[id] = skill.load (from db) -> level, creation points (if needed)
+
   ☐ target items
-  ☐ equip weapon
+    ☐ get/drop -> room items
+      ☐ room items array?
+    ✔ wear/remove @done (16-08-06 13:56)
+  ✔ equip weapon @done (16-08-06 13:48)
   ✔ handle vision affects/display/targeting @done (16-08-05 16:34)
     ✔ blind -> render, target @done (16-08-05 16:34)
     ✔ invis/hidden -> render, target @done (16-08-05 16:34)
 
+  ☐ keywords for targeting items/characters
   ☐ acquire gold, buy+sell
 
 thief skills:
 
- ☐ backstab           100%
+ ✔ backstab           100% @done (16-08-06 12:15)
    ✔ basic skill @done (16-08-05 15:59)
-   ☐ ability to use in combat (no args) @general
+   ✔ ability to use in combat (no args) @general @done (16-08-06 12:15)
  ☐ butcher             85%
    ☐ ability to target items @general
    ☐ body part drop from corpse
@@ -99,12 +137,13 @@ thief skills:
    ✔ vision checks @general @done (16-08-05 16:31)
  ✔ hide               100% @done (16-08-05 16:31)
    ✔ vision checks @general @done (16-08-05 16:31)
- ☐ steal              100%
+ ✔ steal              100% @done (16-08-06 14:07)
  ☐ trip               100%
    ☐ 'stun' chance
+   ☐ skills percentage
  ☐ dodge              100%      
- ☐ lore                95%      
-   ☐ ability to target items
+ ✔ lore                95%       @done (16-08-06 14:19)
+   ✔ ability to target items @done (16-08-06 14:19)
  ☐ pick lock           84%      
    ☐ exit Objects with closed/open, locked/unlocked and key
  ☐ shadow              82%      
@@ -125,9 +164,9 @@ thief skills:
  ☐ substitution        76%      
  ✘ fast healing        86%       @cancelled (16-08-05 16:05)
  ✘ enhanced damage    100% @cancelled (16-08-05 16:05)
- ☐ smokebomb           90%
-   ☐ blind
-   ☐ vision
+ ✘ smokebomb           90% @cancelled (16-08-06 14:19)
+   ✔ blind @done (16-08-06 14:19)
+   ✔ vision @done (16-08-06 14:19)
  ☐ snake bite          98%     
    ☐ poison, do_combat behavior
  ☐ bribe               86%      
