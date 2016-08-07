@@ -48,6 +48,8 @@ character:
 
   ☐ port forwarding on local machine to make game visible!
   ☐ bugs
+    ☐ when you create a new character, it isn't loaded into in-game list of mobiles, so can't login until game is restarted!
+    ☐ solve by having loadPlayerMobile query db directly! 
     ✔ npcs don't execute combat @fixed @done (16-08-05 09:30)
 
   ✔ rails 5.0 @done (16-08-02 12:46)
@@ -81,9 +83,9 @@ NEXT:::
             ☐ 1. reconnect/login depending on which one it is... (in game, if player exists in users)
           ☐ ii. can type your commands
         ☐ d. character creator (includes npcs?)
-          ☐ select class, loads (via angular) available skills
-          ☐ skill object: has name, creation points, required level (cosmetic at the moment)
-          ☐ creating join table entries in character_skill (has percentage, also cosmetic atm)
+          ✔ select class, loads (via angular) available skills @done (16-08-07 13:02)
+          ✔ skill object: has name, creation points, required level (cosmetic at the moment) @done (16-08-07 13:02)
+          ✔ creating join table entries in character_skill (has percentage, also cosmetic atm) @done (16-08-07 13:02)
           ☐ validates (twice, in angular and rails) total creation points, make sure it is not OVER
           ☐ creates a new character!
         ☐ handle command
@@ -94,6 +96,13 @@ NEXT:::
           ☐ select percentage, skill_id from character skills where character_id = X
         ☐ game db-load
           ☐ skills[id] = skill.load (from db) -> level, creation points (if needed)
+
+ ☐ @later:
+   ☐ quit/linkdead timeout should update db to set user.active to nil, then can login as new player elsewhere
+   ☐ 
+
+ ☐ skill object
+   ☐ name, creation points, id, level
 
   ☐ target items
     ☐ get/drop -> room items

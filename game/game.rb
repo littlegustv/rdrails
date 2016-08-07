@@ -75,14 +75,19 @@ class Game
   end
 
   def login(id)
+    puts "logging in user with id: #{id}"
     if !user(id)
+      puts "not currently active in-game"      
       m_info = loadPlayerMobileData(id)
+      # FIX ME: in case there is a NEW character, need to reload from DB
+
       u = Mobile.new(m_info[0], m_info[1], m_info[2], $game, id)
       loadInventory(u)
       loadEquipment(u)
       @users.push(u)
       @mobiles.push(u)
     else
+      puts "already logged in"
       u = user(id)
     end
     return u

@@ -17,10 +17,10 @@ class ClientsController < ApplicationController
           current_user.active = Mobile.create(character_id: params[:play], room_id: Room.first.id, user_id: current_user.id)
         end
       end
-      ActionCable.server.broadcast "server",
-      message: "login",
-      user: current_user.id
     end
+    ActionCable.server.broadcast "server",
+    message: "login",
+    user: current_user.id
 
     if params[:content]
       ActionCable.server.broadcast "server",

@@ -29,7 +29,11 @@ rdApp.factory('Area', function ($resource) {
   return $resource('/areas/:id.json');
 });
 
-rdApp.controller('editCharacter', function ($scope, Character, Item) {
+rdApp.factory('Skill', function ($resource) {
+  return $resource('/skills/:id.json');
+});
+
+rdApp.controller('editCharacter', function ($scope, Character, Item, Skill) {
   var characterId = $('#characterId').val() || "new";
   if (characterId) {
     Character.get({id: characterId}, function (character) {
@@ -41,24 +45,27 @@ rdApp.controller('editCharacter', function ($scope, Character, Item) {
   $scope.save = function () {
     $scope.character.stat_attributes = $scope.character.stat;
     $scope.character.equipment_attributes = $scope.character.equipment;
+    $scope.character.character_skills_attributes = $scope.character.skills;
     $scope.character.inventory_items_attributes = $scope.character.inventory_items.filter( function (m) { return m.item_id });
     delete $scope.character['stat'];
     delete $scope.character['inventory_items'];
     delete $scope.character['equipment'];
+    delete $scope.character['skills'];
     var redirect = $scope.character.id === undefined;
     $scope.character = Character.save($scope.character, function (character) {
       if (redirect) window.location = '/characters/' + $scope.character.id;
     });
   }
 
-  $scope.destroy = function (mobile) {
-    mobile._destroy = true;
+  $scope.destroy = function (obj) {
+    obj._destroy = true;
   }
 
   $scope.add = function (array) {
     if ($scope.character) array.push({});
   }
   $scope.items = Item.query();
+  $scope.skills = Skill.query();
   debugScope = $scope;
 });
 

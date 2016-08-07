@@ -1,0 +1,17 @@
+<div class="row">
+	<div class="col-sm-6">
+		<div class="panel-default panel">
+			<div class="panel-body">
+				<%= form_for @skill do |f| %>
+					<%= f.label :name %>
+					<%= f.text_field :name, class: "form-control" %>
+					<%= f.label :creation_points %>
+					<%= f.number_field :cp, class: "form-control" %>
+					<%= f.label :level %>
+					<%= f.number_field :level, class: "form-control" %>
+					<%= f.submit "Ok", class: "form-control" %>
+				<% end %>
+			</div>
+		</div>
+	</div>
+</div>

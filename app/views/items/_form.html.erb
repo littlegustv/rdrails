@@ -2,7 +2,7 @@
     <%= f.text_field :name, class: "form-control", placeholder: "Name..." %>
     <%= f.text_field :description, class: "form-control", placeholder: "Description..."  %>
 
-		<%= f.select :slot, ["head", "weapon"], class: "form-control" %>
+		<%= f.select :slot, ["head", "weapon"], {}, {class: "form-control"} %>
 
 		<%= f.fields_for :stat do |sf| %>
 			<%= sf.number_field :hitpoints, class: "form-control", placeholder: "Hitpoints..." %>

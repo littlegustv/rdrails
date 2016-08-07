@@ -8,6 +8,16 @@
     				<div class="input-group">
               <label for="" class="control-label">Name</label><input type="text" ng-model="character.name" class="form-control">
             </div>
+            <!-- admin always have access to class options -->
+            <% if current_user.role == "immortal" %>
+              <select ng-model="character.char_class" ng-options="o for o in [null, 'Thief']"></select>
+            <% else %>
+              <!-- show class select on NEW character only -->
+              <label for="" class="control-label">Class</label>
+              <select class="form-control" ng-show="!character.id" ng-model="character.char_class" ng-options="o for o in ['Thief']"></select>
+              <span ng-show="character.id">{{ character.char_class }}</span>
+            <% end %>
+
             <div class="input-group">
               <label for="" class="control-label">Description</label><input type="text" class="form-control" ng-model="character.description">
             </div>
@@ -32,11 +42,26 @@
             </div>
             <span class="btn btn-primary" ng-click="add(character.inventory_items);">Add Item</span>
             <br>
+
             <label for="" class="control-label">Equipment</label>
             <div ng-repeat="(slot, item) in character.equipment track by $index" class="input-group">
               <label for="" class="control-label">{{ slot }}</label>
               <select name="" id="" ng-model="character.equipment[slot]" class="form-control" ng-options="item.id as item.name for item in items"></select>
+            </div><br>
+
+            <!-- only accessible to immortals and new character creation screen -->
+            <% if current_user.role == "immortal" || !@character.id %>
+            <label for="" class="control-label">Skills</label>
+            <div ng-repeat="skill in character.skills" class="input-group">
+              <select name="" id="" ng-model="skill.skill_id" class="form-control" ng-options="skill.id as skill.name for skill in skills"></select>
+              <span class="input-group-btn" ng-click="destroy(skill);">
+                <span class="btn btn-default" ng-class="{'btn-danger' : skill._destroy}">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </span>
+              </span>
             </div>
+            <span class="btn btn-primary" ng-click="add(character.skills);">Add Item</span>
+            <% end %>
     	</div>
       <div class="panel-footer">
           <div class="panel-footer"><span class="btn btn-default" ng-click="save();">Save</span></div>

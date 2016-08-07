@@ -3,7 +3,9 @@ class CharactersController < ApplicationController
 
   def new
     @character = Character.new
-    @character.stat = Stat.new
+    @character.stat = Stat.new 
+    @character.equipment = Equipment.new
+    @character.char_class = "Thief"
     respond_to do |format|
       format.html { render :edit }
       format.json { render :show }
@@ -74,11 +76,13 @@ class CharactersController < ApplicationController
 
   def character_params
     params.permit(:id,
-      :name, 
+      :name,
+      :char_class,
       :description,  
       :stat_attributes => [:hitpoints, :manapoints, :attackspeed, :damagereduction, :damage],  
       :inventory_items_attributes => [:id, :_destroy, :item_id, :character_id],
-      :equipment_attributes => [:weapon_id, :head_id]
+      :equipment_attributes => [:weapon_id, :head_id],
+      :character_skills_attributes => [:id, :skill_id, :character_id, :percentage]
       )
   end
 end

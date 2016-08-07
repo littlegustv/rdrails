@@ -75,7 +75,7 @@ module SQLITE
       @characters[row[0]] = Character.new(row[1], row[2], stat)
     end
   end
-
+  
   def loadItems
     @items = {}
     rows = @db.execute "select id, name, description, stat_id, slot from items"

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160806174034) do
+ActiveRecord::Schema.define(version: 20160807165143) do
 
   create_table "areas", force: :cascade do |t|
     t.string   "name"
@@ -18,13 +18,23 @@ ActiveRecord::Schema.define(version: 20160806174034) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "character_skills", force: :cascade do |t|
+    t.integer  "character_id"
+    t.integer  "skill_id"
+    t.integer  "percentage"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
   create_table "characters", force: :cascade do |t|
     t.string   "name"
     t.text     "description"
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
     t.         "created_by_id", default: "1"
     t.integer  "stat_id"
+    t.boolean  "playable",      default: false
+    t.string   "char_class"
   end
 
   create_table "equipment", force: :cascade do |t|
@@ -82,6 +92,14 @@ ActiveRecord::Schema.define(version: 20160806174034) do
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
     t.integer  "area_id"
+  end
+
+  create_table "skills", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "cp"
+    t.integer  "level"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "stats", force: :cascade do |t|

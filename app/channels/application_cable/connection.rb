@@ -4,7 +4,7 @@ module ApplicationCable
     
     def connect
       self.current_user = find_verified_user
-      ActionCable.server.broadcast "server", message: "login", user: self.current_user.id
+#      ActionCable.server.broadcast "server", message: "login", user: self.current_user.id
     end
 
     protected

@@ -1,0 +1,18 @@
+<div class="row">
+	<div class="col-sm-5">
+		<ul class="list-group">
+			<li class="list-group-item"><a href="<%= new_skill_path %>" class="btn btn-primary">Create new skill</a></li>
+			<% @skills.each do |skill| %>
+				<li class="list-group-item">
+					<h3 class="list-group-item-heading"><%= skill.name %></h3>
+					<p class="list-group-item-body"><b>CP:</b> <%= skill.cp %></p>
+					<p class="list-group-item-body"><b>Level:</b> <%= skill.level %></p>
+					<p class="list-group-item-body">
+						<%= link_to "Edit", edit_skill_path(skill) %>
+						<%= link_to "Show", skill_path(skill) %>
+					</p>
+				</li>
+			<% end %>
+		</ul>
+	</div>
+</div>
