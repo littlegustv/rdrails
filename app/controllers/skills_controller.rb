@@ -3,7 +3,7 @@ class SkillsController < ApplicationController
 		@skills = Skill.all
 		respond_to do |format|
 			format.html
-			format.json {render json: @skills}
+			format.json {render json: @skills.map { |skill| {skill_id: skill.id, name: skill.name, cp: skill.cp, level: skill.cp } } }
 		end
 	end
 

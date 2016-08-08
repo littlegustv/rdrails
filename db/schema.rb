@@ -31,7 +31,7 @@ ActiveRecord::Schema.define(version: 20160807165143) do
     t.text     "description"
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
-    t.         "created_by_id", default: "1"
+    t.integer  "created_by_id"
     t.integer  "stat_id"
     t.boolean  "playable",      default: false
     t.string   "char_class"
@@ -71,14 +71,6 @@ ActiveRecord::Schema.define(version: 20160807165143) do
     t.integer "room_id",      null: false
     t.integer "character_id", null: false
     t.integer "user_id"
-  end
-
-  create_table "old_characters", force: :cascade do |t|
-    t.string   "name"
-    t.text     "description"
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
-    t.         "created_by",  default: "1"
   end
 
   create_table "room_items", force: :cascade do |t|

@@ -1,6 +1,6 @@
 var debugScope;
 
-var rdApp = angular.module('rdApp', ['ngResource']);
+var rdApp = angular.module('rdApp', ['ngResource', 'ui.sortable']);
 
 rdApp.run(function ($http) {
     // For Rails CSRF
@@ -39,6 +39,7 @@ rdApp.controller('editCharacter', function ($scope, Character, Item, Skill) {
     Character.get({id: characterId}, function (character) {
       $scope.character = character;
       if ($scope.character.inventory_items.length <= 0) $scope.character.inventory_items = [{}];
+      //if ($scope.charac$scope.character.skills = [];
     });
   }
 
@@ -56,6 +57,17 @@ rdApp.controller('editCharacter', function ($scope, Character, Item, Skill) {
       if (redirect) window.location = '/characters/' + $scope.character.id;
     });
   }
+
+  $scope.sortableOptions = {
+    connectWith: ".skills-list"
+  };
+
+  $scope.creationPoints = function () {
+    if ($scope.character.skills.length == 0)
+      return 0;
+    else
+      return $scope.character.skills.map( function (s) { return s.cp }).reduce( function (s1, s2) { return s1 + s2; }, 0);
+  };
 
   $scope.destroy = function (obj) {
     obj._destroy = true;

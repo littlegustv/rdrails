@@ -1,26 +1,27 @@
-<div class="row">
+<div class="row" ng-controller="editCharacter">
   <div class="col-sm-6">
-    <div class="panel panel-default" ng-controller="editCharacter">
+    <div class="panel panel-default">
     	<div class="panel-heading">
     		<h2>Edit <%= @character.name %></h2>
     	</div>
     	<div class="panel-body">
-    				<div class="input-group">
-              <label for="" class="control-label">Name</label><input type="text" ng-model="character.name" class="form-control">
-            </div>
+              <h3 class="text-center">Name</h3>
+              <input type="text" ng-model="character.name" class="form-control">
             <!-- admin always have access to class options -->
+
+              <h3 for="" class="text-center">Class</h3>
             <% if current_user.role == "immortal" %>
               <select ng-model="character.char_class" ng-options="o for o in [null, 'Thief']"></select>
             <% else %>
               <!-- show class select on NEW character only -->
-              <label for="" class="control-label">Class</label>
               <select class="form-control" ng-show="!character.id" ng-model="character.char_class" ng-options="o for o in ['Thief']"></select>
               <span ng-show="character.id">{{ character.char_class }}</span>
             <% end %>
 
-            <div class="input-group">
-              <label for="" class="control-label">Description</label><input type="text" class="form-control" ng-model="character.description">
-            </div>
+              <h3 for="" class="text-center">Description</h3>
+              <input type="text" class="form-control" ng-model="character.description">
+            <!-- stats, inventory and equipment are not settable by players, should have defaults -->
+            <% if current_user.role == "immortal" %>
             <label for="" class="control-label">Stats</label>
             <table>
               <tbody>
@@ -48,19 +49,37 @@
               <label for="" class="control-label">{{ slot }}</label>
               <select name="" id="" ng-model="character.equipment[slot]" class="form-control" ng-options="item.id as item.name for item in items"></select>
             </div><br>
+            <% end %>
 
             <!-- only accessible to immortals and new character creation screen -->
+            <h3 class="text-center">
+              Skills
+              <br>
+              <small>
+                <strong>Creation Points:</strong> {{ creationPoints() }}
+              </small>
+            </h3>
             <% if current_user.role == "immortal" || !@character.id %>
-            <label for="" class="control-label">Skills</label>
-            <div ng-repeat="skill in character.skills" class="input-group">
-              <select name="" id="" ng-model="skill.skill_id" class="form-control" ng-options="skill.id as skill.name for skill in skills"></select>
-              <span class="input-group-btn" ng-click="destroy(skill);">
-                <span class="btn btn-default" ng-class="{'btn-danger' : skill._destroy}">
-                  <span class="glyphicon glyphicon-remove"></span>
-                </span>
-              </span>
-            </div>
-            <span class="btn btn-primary" ng-click="add(character.skills);">Add Item</span>
+              <ul class="list-group skills-list" ui-sortable="sortableOptions" ng-model="character.skills">
+                <li class='list-group-item' ng-if="character.skills.length <= 0">Drag skills here to add them to your character.</li>
+                <li class='list-group-item skill' ng-repeat="skill in character.skills">
+                  <h4 class="list-group-item-heading">{{ skill.name }}</h4>
+                  <p class="list-group-item-body">
+                    <strong>Level:</strong> {{ skill.level }}
+                    <strong>Creation Points:</strong> {{ skill.cp }}
+                  </p>
+                </li>
+              </ul>
+            <% else %>
+            <ul class="list-group">
+              <li class="list-group-item text-center" ng-repeat="skill in character.skills">
+                <h4 class="list-group-item-heading">{{ skill.name }}</h4>
+                <p class="list-group-item-body">
+                  <strong>Level:</strong> {{ skill.level }}
+                  <strong>Creation Points:</strong> {{ skill.cp }}
+                </p>
+              </li>
+            </ul>  
             <% end %>
     	</div>
       <div class="panel-footer">
@@ -69,4 +88,19 @@
     </div>
     <input type="hidden" value="<%= @character.id %>" id="characterId">
   </div>
+  <% if current_user.role == "immortal" || !@character.id %>
+    <div class="col-sm-6">
+      <h3>Skills</h3>
+      <ul class='list-group skills-list' ui-sortable="sortableOptions" ng-model="skills">
+        <li class='list-group-item skill' ng-repeat="skill in skills track by $index">
+          <h4 class="list-group-item-heading">{{ skill.name }}</h4>
+          <p class="list-group-item-body">
+            <strong>Level:</strong> {{ skill.level }}
+            <strong>Creation Points:</strong> {{ skill.cp }}
+          </p>
+        </li>
+        <li class='list-group-item text-warning'>Drag skills back here to remove them from your character.</li>
+      </div>
+    </div>
+  <% end %>
 </div>
