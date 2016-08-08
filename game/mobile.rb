@@ -170,6 +170,7 @@ class Mobile
     if @combat
       do_hit(noun)
       10.times do |i|
+        return unless @combat
         n = rand(10) + i * 10
         if n < stat("attackspeed")
           do_hit(noun)
@@ -177,6 +178,7 @@ class Mobile
       end
 
       @behaviors.each do |k, b|
+        return unless @combat
         b.onCombat
       end
     end
@@ -216,7 +218,7 @@ class Mobile
     @combat.do_damage(damage)
     if buffered
       @combat.combat_buffer += "#{render(@combat)}'s wobbly #{noun} bruises you, dealing #{damage} damage.<br>"
-      @combat_buffer += "Your wobbly #{noun} bruises #{@combat.render(self)}, dealing #{damage} damage.<br>"
+      @combat_buffer += "Your wobbly #{noun} bruises #{@combat.render(self)}, dealing #{damage} damage.  #{@combat.stat('hitpoints')}hp remains.<br>"
     else
       @combat.emit "#{render(@combat)}'s wobbly #{noun} bruises you, dealing #{damage} damage.<br>"
       emit "Your wobbly #{noun} bruises #{@combat.render(self)}, dealing #{damage} damage.<br>"

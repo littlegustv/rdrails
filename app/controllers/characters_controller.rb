@@ -49,7 +49,12 @@ class CharactersController < ApplicationController
   end
 
   def edit
-    @character = Character.find(params[:id])
+    if current_user.role == "immortal"
+      @character = Character.find(params[:id])
+    else
+      flash[:error] = "You are not authorized to access this page."
+      redirect_to root_path
+    end
   end
 
   def index

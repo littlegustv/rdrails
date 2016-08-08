@@ -1,10 +1,52 @@
-<h1><%= @character.name %></h1>
-<p><%= @character.description %></p>
-<ul class="list-inline">
-  <li class="h4">This character appears in the following rooms:</li>
-  <% @character.rooms.each do |room| %>
-    <li><%= link_to room.name, room_path(room) %></li>
-  <% end %>
-</ul>
-<%= render partial: "shared/show_stats", locals: {stats: @character.stat} %> 
-<%= link_to "Edit", edit_character_path(@character), class: 'btn btn-success' %>
+<div class="row">
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h1><%= @character.name %></h1>
+      </div>
+      <div class="panel-body">
+        <p><%= @character.description %></p>
+        <ul class="list-inline">
+          <li class="h4">This character appears in the following rooms:</li>
+          <% @character.rooms.each do |room| %>
+            <li><%= link_to room.name, room_path(room) %></li>
+          <% end %>
+        </ul>
+        <%= render partial: "shared/show_stats", locals: {stats: @character.stat} %> 
+        <%= link_to "Edit", edit_character_path(@character), class: 'btn btn-success' %>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <ul class="list-group">
+      <li class="list-group-item">
+        <h1 class="list-group-item-heading">Inventory</h1>
+      </li>
+      <% @character.items.each do |item| %>
+      <li class="list-group-item">
+        <h4 class="list-group-item-heading"><%= item.name %></h4>
+      </li>
+      <% end %>
+    </ul>
+    <ul class="list-group">
+      <li class="list-group-item">
+        <h1 class="list-group-item-heading">Equipment</h1>
+      </li>
+      <% @character.equipment.display_value.each do |slot, item| %>
+      <li class="list-group-item">
+        <h4 class="list-group-item-heading"><strong><%= slot.to_s.humanize %>:</strong> <%= item ? item.name : "Nothing" %></h4>
+      </li>
+      <% end %>
+    </ul>
+    <ul class="list-group">
+      <li class="list-group-item">
+        <h1 class="list-group-item-heading">Skills</h1>
+      </li>
+      <% @character.skills.each do |skill| %>
+      <li class="list-group-item">
+        <h3 class="list-group-item-heading"><%= skill.name %></h3>
+      </li>
+      <% end %>
+    </ul>
+  </div>
+</div>

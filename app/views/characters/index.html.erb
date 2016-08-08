@@ -11,8 +11,10 @@
             <div class="col-sm-6 text-right">
               <%= link_to 'Play', client_path(play: character.id), class: "btn btn-default", disabled: current_user.active.present? %>
               <a href="<%= character_path(character) %>" class="btn btn-info">See more</a>
-              <a href="<%= edit_character_path(character) %>" class="btn btn-success">Edit</a>
-              <%= link_to 'Delete', character_path(character), method: :delete, class: 'btn btn-danger' %>
+              <% if current_user.role == "immortal" %>
+                <a href="<%= edit_character_path(character) %>" class="btn btn-success">Edit</a>
+                <%= link_to 'Delete', character_path(character), method: :delete, class: 'btn btn-danger' %>
+              <% end %>
               <!--<a href="<%= character_path(character) %>/destroy" class="btn btn-danger">Delete</a>-->
             </div>
           </div>

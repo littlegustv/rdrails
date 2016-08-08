@@ -9,4 +9,11 @@ class Equipment < ApplicationRecord
 			head_id: head ? head.id : nil
 		}
 	end
+
+  def display_value
+    {
+      weapon: weapon,
+      head: head
+    }
+  end
 end

@@ -30,8 +30,9 @@ character:
   ☐ add skill percentages, levelling?
     ☐ check skill percentage (can be fixed for now)
     ☐ add skill percentage records, saved in db as well
-  ☐ add equipment slots
-  ☐ add class to character, load skills modules as appropriate
+  ✔ add equipment slots @done (16-08-08 16:22)
+  ✔ add class to character @done (16-08-08 16:22)
+    ☐ load skills modules as appropriate
   ☐ reboot/reload button on rails site (sidekiq?)
     ☐ admin panel, require 'start.rb', trigger start script on button press?
   ☐ figure out heroku hosting -> free heroku redis? postgresql!?
@@ -101,8 +102,8 @@ NEXT:::
    ☐ quit/linkdead timeout should update db to set user.active to nil, then can login as new player elsewhere
    ☐ 
 
- ☐ skill object
-   ☐ name, creation points, id, level
+ ✔ skill object @done (16-08-08 16:23)
+   ✔ name, creation points, id, level @done (16-08-08 16:23)
 
   ☐ target items
     ☐ get/drop -> room items
