@@ -9,7 +9,7 @@ module ThiefCommands
         emit "They are hurt and suspicious, you can't sneak up."
         return 0
       elsif start_combat(target)
-        do_hit("backstab", false)
+        do_hit("backstab", false, {hitroll: 2, damage: 20})
         return 1
       end
     else

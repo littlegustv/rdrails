@@ -1,4 +1,4 @@
-json.(@character, :id, :name, :description, :char_class)
+json.(@character, :id, :name, :short, :long, :keywords, :description, :level, :char_class)
 
 json.inventory_items @character.inventory_items do |inventory_item|
 	json.(inventory_item, :id, :item_id)

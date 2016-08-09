@@ -5,7 +5,8 @@ class Stat < ApplicationRecord
 			manapoints: manapoints,
 			attackspeed: attackspeed,
 			damagereduction: damagereduction,
-      damage: damage
+      damage: damage,
+      hitroll: hitroll
 		}
 	end
 end

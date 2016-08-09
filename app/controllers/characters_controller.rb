@@ -18,6 +18,8 @@ class CharactersController < ApplicationController
       @character.update(character_params)
     else
       @character = Character.new(character_params)
+      @character.equipment = Equipment.create if @character.equipment.nil?
+      @character.stat = Stat.create if @character.stat.nil?
       @character.update!(created_by: current_user)
     end
     if @character.save
@@ -82,9 +84,12 @@ class CharactersController < ApplicationController
   def character_params
     params.permit(:id,
       :name,
+      :short,
+      :long,
+      :keywords,
       :char_class,
       :description,  
-      :stat_attributes => [:hitpoints, :manapoints, :attackspeed, :damagereduction, :damage],  
+      :stat_attributes => [:hitpoints, :manapoints, :attackspeed, :damagereduction, :damage, :hitroll],  
       :inventory_items_attributes => [:id, :_destroy, :item_id, :character_id],
       :equipment_attributes => [:weapon_id, :head_id],
       :character_skills_attributes => [:id, :skill_id, :character_id, :percentage]

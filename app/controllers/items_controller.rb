@@ -39,7 +39,7 @@ class ItemsController < ApplicationController
   private
 
   def item_params
-  	params.require(:item).permit(:name, :description, :slot, :stat_attributes => [:hitpoints, :manapoints, :attackspeed, :damagereduction])
+  	params.require(:item).permit(:name, :description, :slot, :level, :noun, :stat_attributes => [:hitpoints, :manapoints, :attackspeed, :damagereduction, :damage, :hitroll])
   end
 
 end

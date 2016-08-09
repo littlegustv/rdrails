@@ -15,7 +15,7 @@ class Game
     initDB
     loadItems
     loadRooms
-    loadCharacters
+#    loadCharacters
     loadMobiles
   end
 
@@ -80,12 +80,8 @@ class Game
       puts "not currently active in-game"      
       m_info = loadPlayerMobileData(id)
       # FIX ME: in case there is a NEW character, need to reload from DB
-
-      u = Mobile.new(m_info[0], m_info[1], m_info[2], $game, id)
-      loadInventory(u)
-      loadEquipment(u)
-      @users.push(u)
-      @mobiles.push(u)
+      u = loadMobile(m_info, $game, id)
+      loadCharacterInfo(u, m_info[2])
     else
       puts "already logged in"
       u = user(id)
@@ -96,6 +92,7 @@ class Game
   def logout(id)
     u = user(id)
     puts @mobiles.delete(@users.delete(u))
+    quit_active(u)
   end
 
   def user(id)

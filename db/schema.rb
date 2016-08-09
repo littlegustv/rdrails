@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160807165143) do
+ActiveRecord::Schema.define(version: 20160809152249) do
 
   create_table "areas", force: :cascade do |t|
     t.string   "name"
@@ -21,9 +21,9 @@ ActiveRecord::Schema.define(version: 20160807165143) do
   create_table "character_skills", force: :cascade do |t|
     t.integer  "character_id"
     t.integer  "skill_id"
-    t.integer  "percentage"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.integer  "percentage",   default: 75
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
 
   create_table "characters", force: :cascade do |t|
@@ -35,6 +35,11 @@ ActiveRecord::Schema.define(version: 20160807165143) do
     t.integer  "stat_id"
     t.boolean  "playable",      default: false
     t.string   "char_class"
+    t.integer  "level",         default: 1
+    t.integer  "experience",    default: 0
+    t.string   "short"
+    t.string   "long"
+    t.text     "keywords"
   end
 
   create_table "equipment", force: :cascade do |t|
@@ -65,6 +70,8 @@ ActiveRecord::Schema.define(version: 20160807165143) do
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
     t.string   "slot",        default: "head"
+    t.string   "noun"
+    t.integer  "level",       default: 1
   end
 
   create_table "mobiles", force: :cascade do |t|
@@ -88,20 +95,21 @@ ActiveRecord::Schema.define(version: 20160807165143) do
 
   create_table "skills", force: :cascade do |t|
     t.string   "name"
-    t.integer  "cp"
-    t.integer  "level"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "cp",         default: 1
+    t.integer  "level",      default: 1
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
   create_table "stats", force: :cascade do |t|
-    t.integer  "hitpoints"
-    t.integer  "manapoints"
-    t.integer  "attackspeed"
-    t.integer  "damagereduction"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-    t.integer  "damage"
+    t.integer  "hitpoints",       default: 100
+    t.integer  "manapoints",      default: 80
+    t.integer  "attackspeed",     default: 0
+    t.integer  "damagereduction", default: 0
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.integer  "damage",          default: 5
+    t.integer  "hitroll",         default: 1
   end
 
   create_table "users", force: :cascade do |t|

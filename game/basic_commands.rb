@@ -1,10 +1,26 @@
 module BasicCommands
   def self.extended(mod)
-    mod.commands.push *["look", "north", "south", "east", "west", "up", "down", "who", "quit", "score", "say", "kill", "flee", "rest", "wake", "quicken", "affects", "inventory", "fireball", "equipment", "wear", "remove", "lore"]
+    mod.commands.push *["look", "north", "south", "east", "west", "up", "down", "who", "quit", "score", "say", "kill", "flee", "rest", "wake", "quicken", "affects", "inventory", "fireball", "equipment", "wear", "remove", "lore", "skills"]
   end
 
-  def cmd_look(args = "")
-    @game.emit { |user| room.render(self, :long) if is user } 
+  def cmd_skills(args)
+    emit "<h3>Skills</h3>" + @skills.map { |name, skill| "#{name}: #{skill.percentage.to_i}%" }.join("<br>")
+    return 0
+  end
+
+  def cmd_look(args = [])
+    if args.count <= 0
+      emit room.render(self, :long)
+    else
+      if (t = target_mobile(args))
+        emit t.render(self, :long)
+        @game.emit { |u| "#{render(u)} looks at #{t.render(u)}" if (u.room_id == @room_id && !is(u)) }
+      elsif (t = target_item(args, @inventory + @equipment.values))
+        emit t.render(self, :long)
+      else
+        emit "Look at what?"
+      end
+    end
     return 0
   end
 
@@ -96,7 +112,7 @@ module BasicCommands
   end
 
   def cmd_score(args)
-    @game.emit { |user| "<h3>#{character.name}</h3>" + character.stats.map { |k, v| "<b>#{k}</b> - #{v} [#{stat(k)}]"}.join("<br>") if is user }
+    @game.emit { |user| "<h3>#{@name}</h3>" + @stats.map { |k, v| "<b>#{k}</b> - #{v} [#{stat(k)}]"}.join("<br>") if is user }
     return 0
   end
 

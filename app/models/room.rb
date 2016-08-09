@@ -1,5 +1,5 @@
 class Room < ApplicationRecord
-  has_many :mobiles
+  has_many :mobiles, dependent: :destroy
   has_many :characters, through: :mobiles, class_name: "Character"
 
   has_many :exits

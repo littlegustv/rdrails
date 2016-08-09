@@ -2,13 +2,17 @@
     <%= f.text_field :name, class: "form-control", placeholder: "Name..." %>
     <%= f.text_field :description, class: "form-control", placeholder: "Description..."  %>
 
-		<%= f.select :slot, ["head", "weapon"], {}, {class: "form-control"} %>
+    <%= f.select :slot, ["head", "weapon"], {}, {class: "form-control"} %>
+    <%= f.text_field :noun, class: "form-control", placeholder: "Noun..." %>
+    <%= f.number_field :level, class: "form-control", placeholder: "Level..." %>
 
 		<%= f.fields_for :stat do |sf| %>
 			<%= sf.number_field :hitpoints, class: "form-control", placeholder: "Hitpoints..." %>
 			<%= sf.number_field :manapoints, class: "form-control", placeholder: "Manapoints..." %>
 			<%= sf.number_field :attackspeed, class: "form-control", placeholder: "Attackspeed..." %>
 			<%= sf.number_field :damagereduction, class: "form-control", placeholder: "Damagereduction..." %>
+      <%= sf.number_field :damage, class: "form-control", placeholder: "Damage..." %>
+      <%= sf.number_field :hitroll, class: "form-control", placeholder: "Hitroll..." %>
 		<% end %>
 
     <%= f.submit "Save" , class: "form-control"  %>

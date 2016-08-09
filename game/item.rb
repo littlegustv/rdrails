@@ -1,10 +1,12 @@
 class Item
-  attr_reader :name, :description, :stats, :slot
-  def initialize(name, description, stats, slot)
+  attr_reader :name, :description, :stats, :slot, :noun, :level
+  def initialize(name, description, stats, slot, noun, level)
     @name = name
     @description = description
     @stats = stats
     @slot = slot
+    @noun = noun
+    @level = level
   end
 
   def stat(key)

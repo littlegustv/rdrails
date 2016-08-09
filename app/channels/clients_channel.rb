@@ -6,6 +6,5 @@ class ClientsChannel < ApplicationCable::Channel
   end
 
   def unsubscribed
-    #linkdead
   end
 end

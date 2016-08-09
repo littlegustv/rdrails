@@ -6,6 +6,7 @@ require './behavior.rb'
 require './basic_commands.rb'
 require './thief_commands.rb'
 require './room.rb'
+require './skill.rb'
 require './character.rb'
 require './item.rb'
 require './mobile.rb'
@@ -20,6 +21,7 @@ $game = Game.new(REDIS)
 
 puts 'started'
 
+Thread.abort_on_exception = true
 # so does using a thread here
 Thread.new do
   REDIS.with do |redis|
@@ -34,9 +36,10 @@ Thread.new do
         else
           if (u = $game.user(data['user']))
             u.command(data)
-          else
-            u = $game.login data['user']
+          elsif (u = $game.login data['user'])
             u.command(data)
+          else
+            # nothing
           end
         end
       end

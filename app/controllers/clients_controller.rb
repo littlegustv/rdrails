@@ -1,4 +1,5 @@
 class ClientsController < ApplicationController
+  before_filter :authenticate_user!
 
   def index
     if params[:play]
@@ -15,7 +16,10 @@ class ClientsController < ApplicationController
         else
           puts "Create new mobile"
           current_user.active = Mobile.create(character_id: params[:play], room_id: Room.first.id, user_id: current_user.id)
-        end
+        end 
+        ActionCable.server.broadcast "server",
+        message: "login",
+        user: current_user.id
       end
     end
     ActionCable.server.broadcast "server",

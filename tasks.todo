@@ -17,6 +17,26 @@ mobile:
 character:
   id, name, description, stats (*)
 
+  priority:
+    ✔ reconcile all character/mobile distinctions into single class @done (16-08-09 12:39)
+      ✔ base stats @done (16-08-09 12:39)
+      ✔ equipments/inventory loading @done (16-08-09 12:39)
+      ✔ any remaining rendering not handled by 'render' function @done (16-08-09 12:39)
+    ☐ skill loading
+      ☐ include based on skills in character
+      ☐ check level/percentage
+      ☐ refactor -> change skills from methods to classes, like behaviors?
+    ☐ complete skill set
+      ☐ weapon skill
+        ☐ add column to item (weapon type)
+    ☐ progression
+      ☐ experience and levels (should be relatively simple)
+    ✔ combat @done (16-08-09 12:37)
+      ✔ use all of hitroll, damage, damage reduction and attack speed @done (16-08-09 12:37)
+      ✔ implement damage decorators @done (16-08-09 12:30)
+    ☐ clean up UI completely
+    ☐ code cleanup
+
   ✔ load stats @done (16-08-02 15:59)
   ✔ combat loop @done (16-08-04 12:10)
   ✔ behavior object @done (16-08-04 12:45)
@@ -25,32 +45,23 @@ character:
   ✔ handle death @done (16-08-05 10:02)
     ✔ looting items @done (16-08-05 11:55)
   ✔ handle repop @done (16-08-05 10:38)
-  ☐ add complete skill set for single class -> 1st (thief, see below)
+  ✘ add complete skill set for single class -> 1st (thief, see below) @cancelled (16-08-09 11:44)
 
-  ☐ add skill percentages, levelling?
-    ☐ check skill percentage (can be fixed for now)
-    ☐ add skill percentage records, saved in db as well
+  ✘ add skill percentages, levelling? @cancelled (16-08-09 11:44)
+    ✔ check skill percentage (can be fixed for now) @done (16-08-09 11:39)
+    ✔ add skill percentage records, saved in db as well @done (16-08-09 11:39)
   ✔ add equipment slots @done (16-08-08 16:22)
   ✔ add class to character @done (16-08-08 16:22)
-    ☐ load skills modules as appropriate
+    ✘ load skills modules as appropriate @cancelled (16-08-09 11:44)
   ☐ reboot/reload button on rails site (sidekiq?)
     ☐ admin panel, require 'start.rb', trigger start script on button press?
   ☐ figure out heroku hosting -> free heroku redis? postgresql!?
-  ☐ handle SAVING of players
-
-  ☐ make the login work like really
-    ☐ current process:
-      ☐ 1. create a character
-      ☐ 2. select that character (sets active to that character, creates mobile?) @check
-      ☐ 3. but! the game doesn't find the character, since there is no mobile associated with it (as loaded when the game started)
-      ☐ 4. so need to restart the game, then open client again
-      ☐ 5. active player character works - I think...
- 
+  ✘ handle SAVING of players @cancelled (16-08-09 11:44)
 
   ☐ port forwarding on local machine to make game visible!
   ☐ bugs
-    ☐ when you create a new character, it isn't loaded into in-game list of mobiles, so can't login until game is restarted!
-    ☐ solve by having loadPlayerMobile query db directly! 
+    ✔ when you create a new character, it isn't loaded into in-game list of mobiles, so can't login until game is restarted! @done (16-08-09 11:45)
+    ✔ solve by having loadPlayerMobile query db directly!  @done (16-08-09 11:45)
     ✔ npcs don't execute combat @fixed @done (16-08-05 09:30)
 
   ✔ rails 5.0 @done (16-08-02 12:46)
@@ -73,49 +84,52 @@ general additions needed for following:
   ✔ skill percentage chance to succeed/fail @done (16-08-06 14:09)
 
 NEXT:::
-  ☐ character creation/login
-    ☐ 1. login/signup -workflow
-        ☐ a. login/signup
-        ☐ b. character list
-          ☐ i. if active, display banner of some kind + "QUIT" button -> sets active to nil
-          ☐ ii. else, have list of possible characters with 'select/play' buttons
-        ☐ c. client
-          ☐ i. welcome message (dispact onload event from JS, instead of (or in addition to) rails channel, maybe?)
-            ☐ 1. reconnect/login depending on which one it is... (in game, if player exists in users)
-          ☐ ii. can type your commands
-        ☐ d. character creator (includes npcs?)
+  ✔ character creation/login @done (16-08-09 11:45)
+    ✔ 1. login/signup -workflow @done (16-08-09 11:45)
+      ☐ need to refresh once, on character creation, before you actually login
+        ✔ a. login/signup @done (16-08-09 10:39)
+        ✔ b. character list @done (16-08-09 10:39)
+          ✘ i. if active, display banner of some kind + "QUIT" button -> sets active to nil @cancelled (16-08-09 09:46)
+          ✔ ii. else, have list of possible characters with 'select/play' buttons @done (16-08-09 09:46)
+        ✔ c. client @done (16-08-09 10:39)
+          ✔ i. welcome message (dispact onload event from JS, instead of (or in addition to) rails channel, maybe?) @done (16-08-09 09:47)
+            ✔ 1. reconnect/login depending on which one it is... (in game, if player exists in users) @done (16-08-09 09:46)
+          ✔ ii. can type your commands @done (16-08-09 09:47)
+        ✔ d. character creator (includes npcs?) @done (16-08-09 10:39)
           ✔ select class, loads (via angular) available skills @done (16-08-07 13:02)
           ✔ skill object: has name, creation points, required level (cosmetic at the moment) @done (16-08-07 13:02)
           ✔ creating join table entries in character_skill (has percentage, also cosmetic atm) @done (16-08-07 13:02)
           ☐ validates (twice, in angular and rails) total creation points, make sure it is not OVER
-          ☐ creates a new character!
-        ☐ handle command
-          ☐ first checks if command is in skills table
-        ☐ skill
-          ☐ checks percentage in skill table
-        ☐ per-character db-load
-          ☐ select percentage, skill_id from character skills where character_id = X
-        ☐ game db-load
-          ☐ skills[id] = skill.load (from db) -> level, creation points (if needed)
+          ✔ creates a new character! @done (16-08-09 10:01)
+        ✘ handle command @cancelled (16-08-09 11:45)
+          ✘ first checks if command is in skills table @cancelled (16-08-09 11:45)
+        ✔ skill @done (16-08-09 11:45)
+          ✔ checks percentage in skill table @done (16-08-09 11:45)
+        ✔ per-character db-load @done (16-08-09 11:45)
+          ✔ select percentage, skill_id from character skills where character_id = X @done (16-08-09 11:45)
+        ✔ game db-load @done (16-08-09 11:45)
+          ✔ skills[id] = skill.load (from db) -> level, creation points (if needed) @done (16-08-09 11:45)
 
  ☐ @later:
-   ☐ quit/linkdead timeout should update db to set user.active to nil, then can login as new player elsewhere
-   ☐ 
-
+   ✔ quit/linkdead timeout should update db to set user.active to nil, then can login as new player elsewhere @done (16-08-09 10:40)
+  
  ✔ skill object @done (16-08-08 16:23)
    ✔ name, creation points, id, level @done (16-08-08 16:23)
 
-  ☐ target items
-    ☐ get/drop -> room items
-      ☐ room items array?
     ✔ wear/remove @done (16-08-06 13:56)
   ✔ equip weapon @done (16-08-06 13:48)
   ✔ handle vision affects/display/targeting @done (16-08-05 16:34)
     ✔ blind -> render, target @done (16-08-05 16:34)
     ✔ invis/hidden -> render, target @done (16-08-05 16:34)
 
-  ☐ keywords for targeting items/characters
-  ☐ acquire gold, buy+sell
+basic commands:
+  ☐ get/drop
+  ☐ buy/sell
+  ☐ heal
+  ☐ open/close
+  ☐ sleep
+  ☐ eat/drink
+  ☐ socials
 
 thief skills:
 
@@ -127,7 +141,7 @@ thief skills:
    ☐ body part drop from corpse
  ☐ dagger             100%
    ☐ round-combat based on skill @general
-   ☐ equippable weapons (first eq slot)
+   ✔ equippable weapons (first eq slot) @done (16-08-09 11:10)
  ☐ haggle              93%
    ☐ shops, gold drop, buy/sell command
  ✔ peek               100% @done (16-08-05 16:00)

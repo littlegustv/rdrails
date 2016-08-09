@@ -1,15 +1,37 @@
-class Mobile
-  attr_reader :id, :room_id, :commands, :user_id, :start, :combat, :combat_buffer, :character_id
-  attr_writer :commands, :combat, :combat_buffer
-  attr_accessor :behaviors, :affects, :inventory, :stats, :equipment
+DAMAGE_DECORATORS = [
+  ['miss', 'misses', 'clumsy', ''],
+  ['bruise', 'bruises', 'clumsy', ''],
+  ['scrape', 'scrapes', 'wobbly', ''],
+  ['scratch', 'scratches', 'wobbly', ''],
+  ['lightly wound', 'lightly wounds', 'amateur', ''],
+  ['injure', 'injures', 'amateur', ''],
+  ['harm', 'harms', 'competent', ', creating a bruise'],
+  ['thrash', 'thrashes', 'competent', ', leaving marks'],
+  ['decimate', 'decimates', 'cunning', ', the wound bleeds'],
+  ['devastate', 'devastates', 'cunning', ', hitting organs'],
+  ['mutilate', 'mutilates', 'calculated', ', shredding flesh'],
+  ['cripple', 'cripples', 'calculated', ', leaving GAPING holes'],
+  ['DISEMBOWEL', 'DISEMBOWELS', 'calm', ', guts spill out'],
+  ['DISMEMBER', 'DISMEMBERS', 'calm', ', blood sprays forth'],
+  ['ANNIHILATE!', 'ANNIHILATES!', 'furious', ', revealing bones'],
+  ['OBLITERATE!', 'OBLITERATES!', 'furious', 'furious', ', rending organs'],
+  ['DESTROY!!', 'DESTROYS!!', 'frenzied', 'frenzied', ', shattering bones'],
+  ['MASSACRE!!', 'MASSACRES!!', 'barbaric', 'barbaric', ', gore splatters everywhere'],
+  ['!DECAPITATE!', '!DECAPITATES!', 'deadly', 'deadly', ', scrambling some brains'],
+  ['@r!!SHATTER!!@x', '@r!!SHATTERS!!@x', 'legendary', 'legendary', ' into tiny pieces'],
+  ['do @rUNSPEAKABLE@x things to', 'does @rUNSPEAKABLE@x things to', 'ultimate', '!'],
+]
 
-  def initialize(id, room_id, character_id, game, user_id = nil)
+class Mobile
+  attr_reader :id, :room_id, :user_id, :start, :character_id
+  attr_accessor :base,:commands, :combat, :combat_buffer, :behaviors, :affects, :inventory, :stats, :equipment, :skills, :stats, :name, :short, :long, :keywords, :description
+
+  def initialize(id, room_id, game, user_id = nil)
     @id = id
     @user_id = user_id
     @command_queue = []
     @lag = 0
     @room_id = room_id
-    @character_id = character_id
     @game = game
     @combat = nil
     @commands = [] #???
@@ -17,9 +39,19 @@ class Mobile
     @behaviors = {}
     @inventory = []
     @equipment = {}
-    @stats = character.stats.clone
+    @skills = {}
     extend BasicCommands
     extend ThiefCommands
+  end
+
+  def setCharacterInfo(name, short, long, keywords, description, stats)
+    @name = name
+    @short = short
+    @long = long
+    @keywords = keywords ? keywords.split(',') : [@name]
+    @description = description
+    @stats = stats
+    @base = stats.clone
   end
 
   def prompt
@@ -32,7 +64,7 @@ class Mobile
       puts "Equipping! #{item.name}"
     end
     if !@equipment[slot].nil?
-      unequip(slot)
+      @inventory.push(unequip(slot))
     end
     @equipment[slot] = item
   end
@@ -97,7 +129,7 @@ class Mobile
       buffer = ""
       if user_id
         @game.emit do |user|
-          "#{character.name} suffers defeat at the hands of #{@combat.character.name}!!"
+          "#{@name} suffers defeat at the hands of #{@combat.name}!!"
         end
       else
         #looting from npcs only, at the moment
@@ -108,12 +140,12 @@ class Mobile
         end
       end
 
-      buffer += "#{character.name} is DEAD!!<br>"
+      buffer += "#{@name} is DEAD!!<br>"
       @combat.emit buffer
       end_combat
     end
     if @user_id
-      @stats = character.stats.clone
+      @stats = @base.clone
       @behaviors = {}
       emit "You have been KILLED!"
       addBehavior(Nervous)
@@ -166,6 +198,10 @@ class Mobile
     yield rand(100) <= 75
   end
 
+  def base(key)
+    @base[key].to_i
+  end
+
   def do_round
     if @combat
       do_hit(noun)
@@ -189,7 +225,7 @@ class Mobile
   end
 
   def get_percentage
-    100 * stat("hitpoints") / character.stats["hitpoints"]
+    100 * stat("hitpoints") / base("hitpoints")
   end
 
   def render_condition(from)
@@ -213,24 +249,47 @@ class Mobile
     condition
   end
 
-  def do_hit(noun, buffered=true)
-    damage = rand(@stats["damage"]) + @stats["damage"]
-    @combat.do_damage(damage)
-    if buffered
-      @combat.combat_buffer += "#{render(@combat)}'s wobbly #{noun} bruises you, dealing #{damage} damage.<br>"
-      @combat_buffer += "Your wobbly #{noun} bruises #{@combat.render(self)}, dealing #{damage} damage.  #{@combat.stat('hitpoints')}hp remains.<br>"
+  def do_hit(noun, buffered=true, modifiers={})
+    if rand(10) < stat('hitroll') + modifiers[:hitroll].to_i
+      damage = @combat.do_damage(rand(stat('damage')) + stat('damage') + modifiers[:damage].to_i)
     else
-      @combat.emit "#{render(@combat)}'s wobbly #{noun} bruises you, dealing #{damage} damage.<br>"
-      emit "Your wobbly #{noun} bruises #{@combat.render(self)}, dealing #{damage} damage.<br>"
+      damage = 0
+    end
+    for_them, for_you, for_room = decorate_combat(damage)
+    if buffered
+      @combat.combat_buffer += for_them
+      @combat_buffer += for_you
+    else
+      @combat.emit for_them
+      emit for_you
     end
   end
 
+  def decorate_combat(damage)
+    puts "damage: #{damage}"
+    min = 0
+    max = 100
+    i = (DAMAGE_DECORATORS.length * (damage - min) / (max - min)).round
+    return [
+      "#{render(@combat)}'s #{DAMAGE_DECORATORS[i][2]} #{noun} #{DAMAGE_DECORATORS[i][1]} you#{DAMAGE_DECORATORS[i][3].length > 0 ? DAMAGE_DECORATORS[i][3] : '.'}<br>",
+      "Your #{DAMAGE_DECORATORS[i][2]} #{noun} #{DAMAGE_DECORATORS[i][1]} #{@combat.render(self)}#{DAMAGE_DECORATORS[i][3].length > 0 ? DAMAGE_DECORATORS[i][3] : '.'}<br>",
+      ""
+    ]
+  end
+
   def noun
-    "entangle"
+    if @equipment["weapon"] && @equipment["weapon"].noun
+      puts "got a noun"
+      @equipment["weapon"].noun
+    else
+      "entangle"
+    end
   end
 
   def do_damage(n)
-    @stats["hitpoints"] -= n
+    d = (n - rand(stat('damagereduction')))
+    @stats["hitpoints"] -= d
+    return d
   end
 
   def command(cmd)
@@ -248,11 +307,9 @@ class Mobile
   def stat(key)
     if @stats[key]
       @stats[key] + @behaviors.map{ |k, b| b.stat(key) }.reduce(:+).to_i + @equipment.map { |_, i| i ? i.stat(key) : 0 }.reduce(:+).to_i # fix me: should use equipment, currently using inventory
+    else
+      0
     end
-  end
-
-  def base(key)
-    character.stats[key]
   end
 
   def room
@@ -260,12 +317,13 @@ class Mobile
   end
 
   def character
-    @game.characters[@character_id]
+    puts "DEPRECATES"
+    self
   end
 
   def target_mobile(args)
     targets = @game.mobiles.select do |mobile| 
-      mobile.room_id == @room_id && mobile.render(self).downcase.match(/\A#{args[0]}/) && can_target(mobile)
+      mobile.room_id == @room_id && mobile.render(self, :keywords).match(/\b#{args[0]}/i) && can_target(mobile)
     end
     target = targets.first
   end
@@ -299,20 +357,29 @@ class Mobile
   # the render function gives output to be sent to a player.  this is where we can handle things that affect rendering, like blind
   def render(from, format = :short)
     # if hidden, shouldn't even try to hide?
+    if format == :keywords
+      return @keywords.join(" ")
+    end
+
+    if is from
+      return "You"
+    end
+
     if hasBehavior("Hide") || from.hasBehavior(["Blind", "Dirtkick", "Smokebomb"])
       return "Someone"
     end
 
     case format
     when :short
-      character.name
+      @name
     when :long
       %(
-        <h4>#{character.name}</h4>
-        <p>#{character.description}</p>
+        <h4>#{@name}</h4>
+        <p>#{@long}</p>
+        #{@equipment.map{ |slot, item| slot + ": " + item.name }.join("<br>")}
       )
     else
-      character.name
+      @name
     end
   end
 

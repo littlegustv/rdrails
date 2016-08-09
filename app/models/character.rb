@@ -1,6 +1,6 @@
 class Character < ApplicationRecord
 
-  has_many :mobiles
+  has_many :mobiles, dependent: :destroy
   has_many :rooms, through: :mobiles, class_name: "Room"
 
   has_many :inventory_items
