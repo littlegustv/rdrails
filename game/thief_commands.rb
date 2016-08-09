@@ -1,6 +1,6 @@
 module ThiefCommands
   def self.extended(mod)
-    mod.commands.push *["backstab", "peer", "peek", "hide", "dirtkick", "rub", "steal"]
+    mod.class_commands.push *(["backstab", "peer", "peek", "hide", "dirtkick", "rub", "steal"] & mod.skills.keys)
   end
 
   def cmd_backstab(args)

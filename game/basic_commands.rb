@@ -1,10 +1,15 @@
 module BasicCommands
   def self.extended(mod)
-    mod.commands.push *["look", "north", "south", "east", "west", "up", "down", "who", "quit", "score", "say", "kill", "flee", "rest", "wake", "quicken", "affects", "inventory", "fireball", "equipment", "wear", "remove", "lore", "skills"]
+    mod.basic_commands.push *["look", "north", "south", "east", "west", "up", "down", "who", "quit", "score", "say", "kill", "flee", "rest", "wake", "quicken", "affects", "inventory", "fireball", "equipment", "wear", "remove", "lore", "skills"]
   end
 
   def cmd_skills(args)
-    emit "<h3>Skills</h3>" + @skills.map { |name, skill| "#{name}: #{skill.percentage.to_i}%" }.join("<br>")
+    emit %(
+      <h3>Skills</h3>
+      #{@skills.select{ |_, s| @level >= s.level }.map{ |name, skill| "#{name}: #{skill.percentage.to_i}%" }.join("<br>")}
+      #{@skills.select{ |_, s| @level < s.level }.map{ |name, skill| "#{name}: Level #{skill.level}" }.join("<br>")}
+      <br><br>
+    )
     return 0
   end
 
@@ -112,7 +117,7 @@ module BasicCommands
   end
 
   def cmd_score(args)
-    @game.emit { |user| "<h3>#{@name}</h3>" + @stats.map { |k, v| "<b>#{k}</b> - #{v} [#{stat(k)}]"}.join("<br>") if is user }
+    @game.emit { |user| "<h3>#{@name}</h3>" + "<b>Level</b>: #{@level}<br><b>XP:</b> #{@experience}<br><b>XP Per level:</b> #{xp_per_level}<br>" + @stats.map { |k, v| "<b>#{k}</b> - #{v} [#{stat(k)}]"}.join("<br>") if is user }
     return 0
   end
 

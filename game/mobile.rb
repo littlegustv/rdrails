@@ -24,32 +24,45 @@ DAMAGE_DECORATORS = [
 
 class Mobile
   attr_reader :id, :room_id, :user_id, :start, :character_id
-  attr_accessor :base,:commands, :combat, :combat_buffer, :behaviors, :affects, :inventory, :stats, :equipment, :skills, :stats, :name, :short, :long, :keywords, :description
+  attr_accessor :experience, :level, :base,:commands, :basic_commands, :class_commands, :combat, :combat_buffer, :behaviors, :affects, :inventory, :stats, :equipment, :skills, :stats, :name, :short, :long, :keywords, :description
 
   def initialize(id, room_id, game, user_id = nil)
     @id = id
     @user_id = user_id
-    @command_queue = []
     @lag = 0
     @room_id = room_id
     @game = game
     @combat = nil
-    @commands = [] #???
+    
+    @basic_commands = []
+    @class_commands = []
+    #@commands = [] #???
     @combat_buffer = ""
+    @command_queue = []
+    
     @behaviors = {}
     @inventory = []
     @equipment = {}
     @skills = {}
+  end
+
+  def addCommands
     extend BasicCommands
     extend ThiefCommands
   end
 
-  def setCharacterInfo(name, short, long, keywords, description, stats)
+  def commands
+    @basic_commands | @class_commands
+  end
+
+  def setCharacterInfo(name, short, long, keywords, description, level, experience, stats)
     @name = name
     @short = short
     @long = long
     @keywords = keywords ? keywords.split(',') : [@name]
     @description = description
+    @level = level
+    @experience = experience
     @stats = stats
     @base = stats.clone
   end
@@ -141,6 +154,7 @@ class Mobile
       end
 
       buffer += "#{@name} is DEAD!!<br>"
+      buffer = @combat.do_xp(self, buffer)
       @combat.emit buffer
       end_combat
     end
@@ -153,6 +167,29 @@ class Mobile
     else
       @game.removeMobile(self)
     end
+  end
+
+  def do_xp(mobile, buffer = nil)
+    xp = [[-5, (mobile.level - @level)].max, 5].min * 50 + 250
+    @experience += xp
+    if buffer
+      buffer += "You get #{xp} experience points."
+    else
+      emit "You get #{xp} experience points."
+    end
+    if @level < (@experience.to_f / xp_per_level).ceil 
+      @level += 1
+      if buffer
+        buffer += "You have gained a level!  You are now level #{@level}."
+      else
+        emit "You have gained a level!  You are now level #{@level}."
+      end
+    end
+    buffer
+  end
+
+  def xp_per_level
+    @skills.map{ |k, v| v.cp}.reduce{ |s1, s2| s1 + s2 } * 100
   end
 
   def check_combat(mobile)
@@ -194,8 +231,7 @@ class Mobile
   end
 
   def skill(name)
-    # right now all skills have a 75% change of succeeding
-    yield rand(100) <= 75
+    yield rand(100) <= @skills[name.downcase].percentage
   end
 
   def base(key)
@@ -391,13 +427,13 @@ class Mobile
 
     args = cmd.split " "
     cmd = args.shift
-    cmd = @commands.select { |command| command.match(/\A#{cmd}.*\z/) }
-    if cmd.count <= 0
-      @game.emit { |user| "Huh?" if is user }
-    elsif (cmd = cmd.first)
-      @lag = send("cmd_#{cmd}", args)
+    cmd = commands.select{ |command| command.match(/\A#{cmd}.*\z/) }.first
+    if cmd.nil?
+      emit "Huh?"
+    elsif @skills[cmd] && @level < @skills[cmd].level
+      emit "You are not high level enough to use that skill."
     else
-      @game.emit { |user| "Huh?" if is user }
+      @lag = send("cmd_#{cmd}", args).to_i
     end
 
   end

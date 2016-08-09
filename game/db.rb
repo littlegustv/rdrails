@@ -50,6 +50,7 @@ module SQLITE
       loadEquipment(u, mobile_info[2])
       loadSkills(u, mobile_info[2])
       loadCharacterInfo(u, mobile_info[2])
+      u.addCommands
       @mobiles.push(u)
       if user_id
         @users.push(u)
@@ -90,10 +91,10 @@ module SQLITE
   end
 =end
   def loadCharacterInfo(mobile, id)
-    new_row = @db.execute("select id, name, short, long, keywords, description, stat_id from characters where id = ?", id).first
+    new_row = @db.execute("select id, name, short, long, keywords, description, level, experience, stat_id from characters where id = ?", id).first
     if new_row
-      stat = loadStat(new_row[6])
-      mobile.setCharacterInfo(new_row[1], new_row[2], new_row[3], new_row[4], new_row[5], stat)
+      stat = loadStat(new_row[8])
+      mobile.setCharacterInfo(new_row[1], new_row[2], new_row[3], new_row[4], new_row[5], new_row[6], new_row[7], stat)
     end
   end
   
@@ -116,7 +117,7 @@ module SQLITE
     character_skills.each do |cs|
       skill_info = @db.execute("select name, cp, level from skills where id = ?", cs[0]).first
       if skill_info
-        mobile.skills[skill_info[0]] = Skill.new(cs[0], skill_info[0], skill_info[1], skill_info[2], cs[1])
+        mobile.skills[skill_info[0].downcase] = Skill.new(cs[0], skill_info[0], skill_info[1], skill_info[2], cs[1])
       end
     end
   end
