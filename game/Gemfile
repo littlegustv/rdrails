@@ -1,5 +1,0 @@
-source 'https://rubygems.org'
-
-gem 'rerun'           #auto-restarts game on file change
-
-gem 'connection_pool' #redis extension gem for handling multiple connections
